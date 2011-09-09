@@ -252,6 +252,47 @@ function drawPath() {
     }
 }
 
+function drawBrez() {
+    if (map.length != 2) {
+        info.html("Stay only two points on canvas (points removed by click)");
+    } else {
+        var startPoint = map[0].x > map[1].x ? map[1] : map[0];
+        var endPoint = map[0].x > map[1].x ? map[0] : map[1];
+        var x1 = startPoint.x, x2 = endPoint.x;
+        var y1 = startPoint.y, y2 = endPoint.y;
+        var x = x1;
+        var y = y1;
+        var dx = x2 - x1;
+        var dy = y2 - y1;
+        var e = 2 * dy - dx;
+        //header
+        var resultString = "<table id='newspaper-b'>"
+        resultString += createTableRow("th", 6, 'i', 'e', 'x', 'y', "e'", 'Point(x,y)');
+        map = [];
+        //algorithm
+        resultString += createTableRow("td", 6, "", "", "", "", "start", "(" + x1 + ";" + y1 + ")");
+        resultString += createTableRow("td", 6, 0, "", x1, y1, e, "(" + x1 + ";" + y1 + ")");
+        for (var i = 1; i <= dx; i++) {
+            var oldE = e;
+            if (e >= 0) {
+                y++;
+                e -= 2 * dx;
+            }
+            x++;
+            e += 2 * dy;
+            resultString += createTableRow("td", 6, i, oldE, x, y, e, "(" + x + ";" + y + ")");
+            drawPoint(x, y);
+        }
+        resultString += createTableRow("td", 6, "", "", "", "", "end", "(" + x2 + ";" + y2 + ")");
+
+        //footer
+        resultString += createTableRow("th", 6, "", "", "", "dx", "dy", "");
+        resultString += createTableRow("td", 6, "", "", "", dx.toFixed(2), dy.toFixed(2), "");
+        resultString += "</table>";
+        steps.html(resultString);
+    }
+}
+
 // th or td and count
 function createTableRow(type, size) {
     if (arguments.length == size + 2) {
@@ -276,4 +317,12 @@ function testCase1() {
     drawPoint(0, 0);
     drawPoint(9, 4);
     drawPath();
+}
+
+function testCase2() {
+    cleanCanvas();
+    resetScale();
+    drawPoint(0, 0);
+    drawPoint(9, 4);
+    drawBrez();
 }
