@@ -15,25 +15,31 @@
         <canvas height='600' width='800' id='canvas'>Refresh browser</canvas>
         <br/>
         <label id="info"></label>
-    </div>
-    <div style="float:right;">
+        <br/>
         <button onclick="downScale()" class="minibutton"><img src="images/zoom_out.png"/></button>
         <button onclick="resetScale()" class="minibutton"><img src="images/table.png"/></button>
         <button onclick="upScale()" class="minibutton"><img src="images/zoom_in.png"/></button>
-        <br/>
+    </div>
+
+    <div style="float:right;">
+
         <label for="xPos">xPos:</label>
-        <input id="xPos" value="0"/>
+        <input id="xPos" value="0" style="width: 40px"/>
         <br/>
         <label for="yPos">yPos:</label>
-        <input id="yPos" value="0"/>
+        <input id="yPos" value="0" style="width: 40px"/>
         <br/>
         <button onclick="drawPoint()" class="minibutton width_100">Draw point</button>
         <br/>
-        <button onclick="cleanCanvas()" class="minibutton width_100">Clear canvas</button>
         <br/>
-        <button onclick="drawPath()" class="minibutton width_100">Draw path</button>
         <br/>
-        <button onclick="testCase1()" class="minibutton width_100">Test case 1</button>
+
+        <div style="display: inline-block;">
+            <button onclick="drawPath()" class="minibutton width_100">Draw path</button>
+            <button onclick="cleanCanvas()" class="minibutton width_100">Clear canvas</button>
+            <button onclick="testCase1()" class="minibutton width_100">Test case 1</button>
+        </div>
+
         <label id="steps"></label>
     </div>
 </div>

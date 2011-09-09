@@ -24,6 +24,13 @@ function initCanvas() {
         var y = Math.floor((e.pageY - offset.top - halfHeight) / DEFAULT_STEP);
         drawPoint(x, -y);
     });
+
+    $("#canvas").mousemove(function(e) {
+        var offset = $("#canvas").offset();
+        var x = Math.floor((e.pageX - offset.left - halfWidth) / DEFAULT_STEP);
+        var y = Math.floor((e.pageY - offset.top - halfHeight) / DEFAULT_STEP);
+        $("#info").html("x: " +  x +  " y: " + -y);
+    });
 }
 
 function drawPoint(x, y) {
