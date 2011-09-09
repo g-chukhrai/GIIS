@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>GiiS 1!</title>
+    <script src="js/jquery-1.6.3.js"></script>
+    <script src="js/canvasBuilder.js"></script>
+    <link href="css/table.css" rel="stylesheet"/>
+    <link href="css/button.css" rel="stylesheet"/>
+    <link href="css/main.css" rel="stylesheet"/>
+</head>
+<body>
+<div style="margin:50px; text-align:center;">
+    <div style="float:left;">
+        <canvas height='600' width='800' id='canvas'>Refresh browser</canvas>
+        <br/>
+        <label id="info"></label>
+    </div>
+    <div style="float:right;">
+        <button onclick="downScale()" class="minibutton"><img src="images/zoom_out.png"/></button>
+        <button onclick="resetScale()" class="minibutton"><img src="images/table.png"/></button>
+        <button onclick="upScale()" class="minibutton"><img src="images/zoom_in.png"/></button>
+        <br/>
+        <label for="xPos">xPos:</label>
+        <input id="xPos" value="0"/>
+        <br/>
+        <label for="yPos">yPos:</label>
+        <input id="yPos" value="0"/>
+        <br/>
+        <button onclick="drawPoint()" class="minibutton width_100">Draw point</button>
+        <br/>
+        <button onclick="cleanCanvas()" class="minibutton width_100">Clear canvas</button>
+        <br/>
+        <button onclick="drawPath()" class="minibutton width_100">Draw path</button>
+        <label id="steps"></label>
+    </div>
+</div>
+</body>
+</html>

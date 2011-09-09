@@ -1,0 +1,28 @@
+#newspaper-b {
+    border: 1px solid #6699CC;
+    border-collapse: collapse;
+    font-family: "Lucida Sans Unicode","Lucida Grande",Sans-Serif;
+    font-size: 10px;
+    margin: 10px;
+    text-align: left;
+    width: 200px;
+}
+#newspaper-b th {
+    color: #003399;
+    font-size: 14px;
+    font-weight: normal;
+    padding: 5px;
+    background-color: #f5f5f5;
+}
+#newspaper-b tbody {
+    background: none repeat scroll 0 0 #E8EDFF;
+}
+#newspaper-b td {
+    border-top: 1px dashed #FFFFFF;
+    color: #666699;
+    padding: 5px;
+}
+#newspaper-b tbody tr:hover td {
+    background: none repeat scroll 0 0 #D0DAFD;
+    color: #333399;
+}
