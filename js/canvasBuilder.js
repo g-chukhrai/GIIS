@@ -58,6 +58,7 @@ function cleanCanvas() {
     clearCanvas();
     map = [];
     drawField();
+    $("#steps").html("");
 }
 
 function clearCanvas() {
@@ -83,13 +84,38 @@ function drawField() {
     }
     context.strokeStyle = "#eee";
     context.stroke();
+
+    //draw X
+    var leftWall = halfWidth - DEFAULT_STEP;
+    context.beginPath();
+    context.moveTo(-leftWall, 0);
+    context.lineTo(0, 0);
+    context.moveTo(DEFAULT_STEP, 0);
+    context.lineTo(leftWall, 0);
+    context.moveTo(leftWall - 5, 5);
+    context.lineTo(leftWall, 0);
+    context.lineTo(leftWall - 5, -5);
+
+    //draw Y
+    var topWall = halfHeight - DEFAULT_STEP;
+    context.moveTo(5, -topWall + 5);
+    context.lineTo(0, -topWall);
+    context.lineTo(-5, -topWall + 5);
+    context.moveTo(0, -topWall);
+    context.lineTo(0, -DEFAULT_STEP);
+    context.moveTo(0, 0);
+    context.lineTo(0, topWall);
+
+
+    context.strokeStyle = "#000";
+    context.stroke();
+
     var mapCopy = map;
     map = [];
     $.each(mapCopy, function() {
         drawPoint(this.x, this.y);
     });
     $("#info").html("");
-    $("#steps").html("");
 }
 
 function upScale() {
@@ -123,16 +149,36 @@ function drawPath() {
         var dy = (y2 - y1) / length;
         var x = x1 + 0.5 * sign(dx);
         var y = y1 + 0.5 * sign(dy);
-        var resultString = "<table id='newspaper-b'><tr><th>i</th><th>x</th><th>y</th><th>Point(x;y)</th></tr>";
+        //header
+        var resultString = "<table id='newspaper-b'>"
+        resultString += createTableRow("th", 4, 'i', 'x', 'y', 'Point(x,y)');
+        //algorithm
         for (var i = 0; i <= length; i++) {
-            resultString += "<tr><td>" + i + "</td><td>" + x + "</td><td>" + y + "</td><td>(" + Math.round(x) + ";" + Math.round(y) + ")</td></tr>";
+            resultString += createTableRow("td", 4, i, x.toFixed(2), y.toFixed(2), "(" + Math.round(x) + ";" + Math.round(y) + ")");
             drawPoint(Math.round(x), Math.round(y));
             x += dx;
             y += dy;
         }
+        //footer
+        resultString += createTableRow("th", 4, "x1", "y1", "x2", "y2");
+        resultString += createTableRow("td", 4, x1, y1, x2, y2);
+        resultString += createTableRow("th", 4, "", "dx", "dy", "length");
+        resultString += createTableRow("td", 4, "", dx.toFixed(2), dy.toFixed(2), length);
         resultString += "</table>";
         $("#steps").html(resultString);
     }
+}
+
+// th or td and count
+function createTableRow(type, size) {
+    if (arguments.length == size + 2) {
+        var row = "<tr>";
+        for (var i = 2; i < size + 2; i++) {
+            row += "<" + type + ">" + arguments[i] + "</" + type + ">";
+        }
+        row += "</tr>";
+    }
+    return row;
 }
 
 function sign(value) {
