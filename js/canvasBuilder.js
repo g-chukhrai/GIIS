@@ -2,6 +2,9 @@ var canvas, context;
 var width, height, halfWidth, halfHeight;
 var DEFAULT_STEP = 20;
 var map = [];
+var canvasElem,info, steps;
+var moveCanvas = false;
+var oldPosX,oldPosY;
 
 $(function() {
     initCanvas()
@@ -9,28 +12,98 @@ $(function() {
 
 function initCanvas() {
     canvas = document.getElementById("canvas");
+    canvasElem = $("#canvas");
+    info = $("#info");
+    steps = $("#steps");
     context = canvas.getContext('2d');
+
     setCtxCenter();
     width = canvas.width;
     halfWidth = width / 2;
     height = canvas.height;
     halfHeight = height / 2;
     context.fillStyle = "blue";
+
     drawField();
+    initEvents();
+}
 
-    $("#canvas").click(function(e) {
-        var offset = $("#canvas").offset();
-        var x = Math.floor((e.pageX - offset.left - halfWidth) / DEFAULT_STEP);
-        var y = Math.floor((e.pageY - offset.top - halfHeight) / DEFAULT_STEP);
-        drawPoint(x, -y);
+var tid = 0;
+var speed = 100;
+function toggleOff() {
+    if (tid != 0) {
+        clearInterval(tid);
+        tid = 0;
+        moveCanvas = false;
+        oldPosX = oldPosY = null;
+    }
+}
+
+function initEvents() {
+    canvasElem.mousedown(function() {
+        if (tid == 0)
+            tid = setInterval(function() {
+                moveCanvas = true;
+            }, speed);
     });
 
-    $("#canvas").mousemove(function(e) {
-        var offset = $("#canvas").offset();
-        var x = Math.floor((e.pageX - offset.left - halfWidth) / DEFAULT_STEP);
-        var y = Math.floor((e.pageY - offset.top - halfHeight) / DEFAULT_STEP);
-        $("#info").html("x: " +  x +  " y: " + -y);
+    canvasElem.mouseup(function(e) {
+        if (!moveCanvas)
+            drawPoint(mouseLocalCord(e).x, mouseLocalCord(e).y);
+        toggleOff();
     });
+
+    canvasElem.mousemove(function(e) {
+        if (moveCanvas) {
+            if (oldPosX != null && oldPosY != null) {
+                context.translate(e.pageX - oldPosX, e.pageY - oldPosY);
+                clearCanvas();
+                drawField();
+            }
+            oldPosX = e.pageX;
+            oldPosY = e.pageY;
+        }
+        else info.html("x: " + mouseLocalCord(e).x + " y: " + mouseLocalCord(e).y);
+    });
+
+    canvasElem.scroll(function() {
+        info.html('<div>Handler for .scroll() called.</div>');
+    });
+
+    window.addEventListener('keydown', move, true);
+    canvas.addEventListener('DOMMouseScroll', scroll, false);
+}
+
+function scroll(e) {
+    var rolled = ('wheelDelta' in e) ? e.wheelDelta : -40 * e.detail;
+    if (rolled > 0)
+        upScale();
+    else
+        downScale();
+    console.log(rolled);
+}
+
+function move(e) {
+    var keyCode = e.keyCode;
+    if (keyCode == 38)
+        context.translate(0, -DEFAULT_STEP);
+    else if (keyCode == 40)
+        context.translate(0, +DEFAULT_STEP);
+    else if (keyCode == 37)
+        context.translate(- DEFAULT_STEP, 0);
+    else if (keyCode == 39)
+        context.translate(DEFAULT_STEP, 0);
+    else
+        return;
+    clearCanvas();
+    drawField();
+}
+
+function mouseLocalCord(e) {
+    var offset = canvasElem.offset();
+    var x = Math.floor((e.pageX - offset.left - halfWidth) / DEFAULT_STEP);
+    var y = Math.floor((e.pageY - offset.top - halfHeight) / DEFAULT_STEP);
+    return {"x" : x, "y" : -y};
 }
 
 function drawPoint(x, y) {
@@ -48,11 +121,11 @@ function drawPoint(x, y) {
     if (removeId == null) {
         map.push({'x' : x, 'y' : y, 'z' : 1});
         context.fillRect(x * DEFAULT_STEP, -y * DEFAULT_STEP, DEFAULT_STEP, DEFAULT_STEP);
-        $("#info").html("Draw point on [" + x + "; " + y + "]");
+        info.html("Draw point on [" + x + "; " + y + "]");
     } else {
         map.splice(removeId, 1);
         context.clearRect(x * DEFAULT_STEP, -y * DEFAULT_STEP, DEFAULT_STEP, DEFAULT_STEP);
-        $("#info").html("Remove point on [" + x + "; " + y + "]");
+        info.html("Remove point on [" + x + "; " + y + "]");
     }
 }
 
@@ -65,7 +138,7 @@ function cleanCanvas() {
     clearCanvas();
     map = [];
     drawField();
-    $("#steps").html("");
+    steps.html("");
 }
 
 function clearCanvas() {
@@ -121,7 +194,7 @@ function drawField() {
     $.each(mapCopy, function() {
         drawPoint(this.x, this.y);
     });
-    $("#info").html("");
+    info.html("");
 }
 
 function upScale() {
@@ -144,7 +217,7 @@ function downScale() {
 
 function drawPath() {
     if (map.length != 2) {
-        $("#info").html("Stay only two points on canvas (points removed by click)");
+        info.html("Stay only two points on canvas (points removed by click)");
     } else {
         var startPoint = map[0].x > map[1].x ? map[1] : map[0];
         var endPoint = map[0].x > map[1].x ? map[0] : map[1];
@@ -175,7 +248,7 @@ function drawPath() {
         resultString += createTableRow("th", 4, "", "dx", "dy", "length");
         resultString += createTableRow("td", 4, "", dx.toFixed(2), dy.toFixed(2), length);
         resultString += "</table>";
-        $("#steps").html(resultString);
+        steps.html(resultString);
     }
 }
 
