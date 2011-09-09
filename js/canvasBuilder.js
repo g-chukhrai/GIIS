@@ -88,13 +88,13 @@ function drawField() {
     //draw X
     var leftWall = halfWidth - DEFAULT_STEP;
     context.beginPath();
-    context.moveTo(-leftWall, 0);
-    context.lineTo(0, 0);
-    context.moveTo(DEFAULT_STEP, 0);
-    context.lineTo(leftWall, 0);
-    context.moveTo(leftWall - 5, 5);
-    context.lineTo(leftWall, 0);
-    context.lineTo(leftWall - 5, -5);
+    context.moveTo(-leftWall, DEFAULT_STEP);
+    context.lineTo(0, DEFAULT_STEP);
+    context.moveTo(DEFAULT_STEP, DEFAULT_STEP);
+    context.lineTo(leftWall, DEFAULT_STEP);
+    context.moveTo(leftWall - 5, 5 + DEFAULT_STEP);
+    context.lineTo(leftWall, DEFAULT_STEP);
+    context.lineTo(leftWall - 5, -5 + DEFAULT_STEP);
 
     //draw Y
     var topWall = halfHeight - DEFAULT_STEP;
@@ -102,10 +102,9 @@ function drawField() {
     context.lineTo(0, -topWall);
     context.lineTo(-5, -topWall + 5);
     context.moveTo(0, -topWall);
-    context.lineTo(0, -DEFAULT_STEP);
-    context.moveTo(0, 0);
+    context.lineTo(0, 0);
+    context.moveTo(0, DEFAULT_STEP);
     context.lineTo(0, topWall);
-
 
     context.strokeStyle = "#000";
     context.stroke();
@@ -140,8 +139,8 @@ function drawPath() {
     if (map.length != 2) {
         $("#info").html("Stay only two points on canvas (points removed by click)");
     } else {
-        var startPoint = map[0];
-        var endPoint = map[1];
+        var startPoint = map[0].x > map[1].x ? map[1] : map[0];
+        var endPoint = map[0].x > map[1].x ? map[0] : map[1];
         var x1 = startPoint.x, x2 = endPoint.x;
         var y1 = startPoint.y, y2 = endPoint.y;
         var length = Math.max(Math.abs(x2 - x1), Math.abs(y2 - y1));
@@ -152,16 +151,20 @@ function drawPath() {
         //header
         var resultString = "<table id='newspaper-b'>"
         resultString += createTableRow("th", 4, 'i', 'x', 'y', 'Point(x,y)');
+        map = [];
         //algorithm
+        resultString += createTableRow("td", 4, "", "", "start", "(" + x1 + ";" + y1 + ")");
         for (var i = 0; i <= length; i++) {
-            resultString += createTableRow("td", 4, i, x.toFixed(2), y.toFixed(2), "(" + Math.round(x) + ";" + Math.round(y) + ")");
-            drawPoint(Math.round(x), Math.round(y));
+            var resultX = Math.floor(x);
+            var resultY = Math.floor(y);
+            resultString += createTableRow("td", 4, i, x.toFixed(4), y.toFixed(4), "(" + resultX + ";" + resultY + ")");
+            drawPoint(resultX, resultY);
             x += dx;
             y += dy;
         }
+        resultString += createTableRow("td", 4, "", "", "end", "(" + x2 + ";" + y2 + ")");
+
         //footer
-        resultString += createTableRow("th", 4, "x1", "y1", "x2", "y2");
-        resultString += createTableRow("td", 4, x1, y1, x2, y2);
         resultString += createTableRow("th", 4, "", "dx", "dy", "length");
         resultString += createTableRow("td", 4, "", dx.toFixed(2), dy.toFixed(2), length);
         resultString += "</table>";
@@ -185,4 +188,12 @@ function sign(value) {
     if (value < 0) return -1;
     else if (value == 0) return 0;
     else return 1;
+}
+
+function testCase1() {
+    cleanCanvas();
+    resetScale();
+    drawPoint(0, 0);
+    drawPoint(9, 4);
+    drawPath();
 }
