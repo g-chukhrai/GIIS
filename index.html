@@ -2,13 +2,21 @@
 <html>
 <head>
     <meta charset="UTF-8"/>
-    <title>GiiS 1!</title>
-    <script src="js/jquery-1.6.3.js"></script>
+    <title>GIIS</title>
+
+    <script src="js/jquery-1.6.2.min.js"></script>
+    <script src="js/jquery-ui-1.8.16.custom.min.js"></script>
+    <script src="js/ui.spinner.min.js"></script>
+    <script src="js/accordion.js"></script>
     <script src="js/canvasBuilder.js"></script>
     <script src="js/algorithms.js"></script>
+    <script src="js/drawCircle.js"></script>
+
     <link href="css/table.css" rel="stylesheet"/>
     <link href="css/button.css" rel="stylesheet"/>
     <link href="css/main.css" rel="stylesheet"/>
+    <link href="css/jquery-ui-1.8.16.custom.css" rel="stylesheet"/>
+    <link href="css/ui.spinner.css" rel="stylesheet"/>
 </head>
 <body>
 <div style="margin:50px; text-align:center;">
@@ -22,35 +30,55 @@
         <button onclick="upScale()" class="minibutton"><img src="images/zoom_in.png"/></button>
     </div>
 
-    <div style="float:left; margin-left:30px;">
+    <div style="float:left; margin-left:20px;max-width:350px;display: inline-block;">
+        <div id="accordion">
 
-        <label for="xPos">xPos:</label>
-        <input id="xPos" value="0" style="width: 40px"/>
-        <label for="yPos">yPos:</label>
-        <input id="yPos" value="0" style="width: 40px"/>
-        <button onclick="drawPoint()" class="minibutton width_100">Draw point</button>
-        <br/>
-        <label for="step">step:</label>
-        <input id="step" value="10" style="width: 120px"/>
-        <button onclick="changeStep()" class="minibutton width_100">Change step</button>
-        <br/>
-        <br/>
+            <h3>Lab 1</h3>
 
-        <div style="display: inline-block;">
-            <button onclick="drawCDA()" class="minibutton width_100">Draw CDA</button>
-            <button onclick="testCase1()" class="minibutton width_100">Test case</button>
-            <br/>
-            <button onclick="drawBrez()" class="minibutton width_100">Draw Brezen</button>
-            <button onclick="testCase2()" class="minibutton width_100">Test case</button>
-            <br/>
-            <button onclick="drawWu()" class="minibutton width_100">Draw Wu</button>
-            <button onclick="testCase3()" class="minibutton width_100">Test case</button>
-            <br/>
-            <button onclick="clearCanvas()" class="minibutton width_100">Clear canvas</button>
+            <div style="width:290px;">
+                <label for="xPos">xPos:</label>
+                <input id="xPos" value="0" style="width: 40px" type="text"/>
+                <label for="yPos">yPos:</label>
+                <input id="yPos" value="0" style="width: 40px" type="text"/>
+                <button onclick="drawPoint()" class="minibutton width_100">Draw point</button>
+                <br/> <br/>
+                <button onclick="drawCDA()" class="minibutton width_100">Draw CDA</button>
+                <button onclick="draw2Points(); drawCDA();" class="minibutton width_100">Test case</button>
+                <br/>
+                <button onclick="drawBrez()" class="minibutton width_100">Draw Brezen</button>
+                <button onclick="draw2Points(); drawBrez();" class="minibutton width_100">Test case</button>
+                <br/>
+                <button onclick="drawWu()" class="minibutton width_100">Draw Wu</button>
+                <button onclick="draw2Points(); drawWu();" class="minibutton width_100">Test case</button>
+            </div>
+
+            <h3>Lab 2</h3>
+
+            <div style="width:290px;">
+                <label for="radius">radius:</label>
+                <input id="radius" value="10" style="width: 40px" type="text"/>
+                <button onclick="clearCanvas();resetScale();drawCircle()" class="minibutton width_100">Draw Circle
+                </button>
+                <br/>
+                <label for="koef">koef:</label>
+                <input id="koef" value="10" style="width: 40px" type="text"/>
+                <button onclick="drawParabola()" class="minibutton width_100">Draw Parabola</button>
+                <br/>
+            </div>
+
+            <h3>Canvas Settings</h3>
+
+            <div style="width:290px;">
+                <label for="step">step:</label>
+                <input id="step" value="10" style="width: 40px" type="text"/>
+                <button onclick="changeStep()" class="minibutton width_100">Change step</button>
+                <button onclick="resetScale()" class="minibutton width_100">Reset scale</button>
+            </div>
         </div>
+        <button onclick="clearCanvas()" class="minibutton " style="width:350px;">Clear canvas</button>
 
 
-        <div style="height:500px;width:300px;overflow: auto;">
+        <div style="height:380px;width:300px;overflow: auto;">
             <table id="steps"></table>
         </div>
     </div>

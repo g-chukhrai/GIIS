@@ -1,9 +1,11 @@
 function drawCDA() {
-    var pts = returnPoints();
+    var pts = returnPoints(2);
     if (pts != null) {
-        var length = Math.max(Math.abs(pts.xLen), Math.abs(pts.yLen));
-        var dx = pts.xLen / length;
-        var dy = pts.yLen / length;
+        var xLen = pts.x2 - pts.x1;
+        var yLen = pts.y2 - pts.y1;
+        var length = Math.max(Math.abs(xLen), Math.abs(yLen));
+        var dx = xLen / length;
+        var dy = yLen / length;
         var x = pts.x1 + 0.5 * Math.sign(dx);
         var y = pts.y1 + 0.5 * Math.sign(dy);
         map = [];
@@ -25,14 +27,16 @@ function drawCDA() {
 }
 
 function drawBrez() {
-    var pts = returnPoints();
+    var pts = returnPoints(2);
     if (pts != null) {
         var x = pts.x1;
         var y = pts.y1;
-        var dx = Math.abs(pts.xLen);
-        var dy = Math.abs(pts.yLen);
-        var signX = Math.sign(pts.xLen);
-        var signY = Math.sign(pts.yLen);
+        var xLen = pts.x2 - pts.x1;
+        var yLen = pts.y2 - pts.y1;
+        var dx = Math.abs(xLen);
+        var dy = Math.abs(yLen);
+        var signX = Math.sign(xLen);
+        var signY = Math.sign(yLen);
 
         var reverse = dy > dx;
         if (reverse) {
@@ -65,6 +69,76 @@ function drawBrez() {
         appendRow("td", 6, "", "", "", dx.toFixed(2), dy.toFixed(2), "");
     }
 }
+function drawWu() {
+    var pts = returnPoints(2);
+    if (pts != null) {
+        var x1 = pts.x1, x2 = pts.x2;
+        var y1 = pts.y1, y2 = pts.y2;
+
+        var dx = x2 - x1;
+        var dy = y2 - y1;
+        var swapAxes = false;
+
+        if (Math.abs(dx) < Math.abs(dy)) {
+            swapAxes = true;
+            var t;
+            t = x1;
+            x1 = y1;
+            y1 = t;
+            t = x2;
+            x2 = y2;
+            y2 = t;
+            t = dx;
+            dx = dy;
+            dy = t;
+        }
+        if (x2 < x1) {
+            t = x1;
+            x1 = x2;
+            x2 = t;
+            t = y1;
+            y1 = y2;
+            y2 = t;
+        }
+        var gradient = dy / dx;
+
+        // handle first endpoint
+        var xend = Math.round(x1);
+        var yend = y1 + gradient * (xend - x1);
+        var xgap = rfpart(x1 + 0.5);
+        var xpxl1 = xend;  // this will be used in the main loop
+        var ypxl1 = ipart(yend);
+        drawPointBrighter(swapAxes, xpxl1, ypxl1, rfpart(yend) * xgap);
+        drawPointBrighter(swapAxes, xpxl1, ypxl1 + 1, fpart(yend) * xgap);
+        var intery = yend + gradient; // first y-intersection for the main loop
+
+        // handle second endpoint
+        xend = Math.round(x2);
+        yend = y2 + gradient * (xend - x2);
+        xgap = fpart(x2 + 0.5);
+        var xpxl2 = xend;  // this will be used in the main loop
+        var ypxl2 = ipart(yend);
+        drawPointBrighter(swapAxes, xpxl2, ypxl2, rfpart(yend) * xgap);
+        drawPointBrighter(swapAxes, xpxl2, ypxl2 + 1, fpart(yend) * xgap);
+
+        // main loop
+
+//        map = [];
+//        steps.html("");
+//        appendRow("th", 4, 'i', 'x', 'y', 'c');
+        for (x = xpxl1 + 1; x <= xpxl2 - 1; x++) {
+            var ipa = ipart(intery);
+            var rfpa = rfpart(intery);
+            var fpa = fpart(intery);
+//            appendRow("td", 4, x, swapAxes ? x : ipa, swapAxes ? ipa : x, Math.round(rfpa * 100));
+//            appendRow("td", 4, x, swapAxes ? x : ipa + 1, swapAxes ? ipa + 1 : x, Math.round(fpa * 100));
+            drawPointBrighter(swapAxes, x, ipa, rfpa);
+            drawPointBrighter(swapAxes, x, ipa + 1, fpa);
+            intery = intery + gradient;
+        }
+    }
+}
+
 
 function drawAllPoints() {
     context.fillStyle = POINT_COLOR;
@@ -115,6 +189,7 @@ function drawField() {
     context.stroke();
     drawAllPoints();
 }
+
 function drawPoint(x, y) {
     if (arguments.length == 0) {
         x = parseInt($("#xPos").val());
@@ -144,21 +219,18 @@ function drawPoint(x, y) {
     }
 }
 
-function returnPoints() {
-    if (map.length != 2) {
-        info.html("Stay only two points on canvas (points removed by click)");
+function returnPoints(count) {
+    if (map.length != count) {
+        info.html("Canvas should contains " + count + " points (add/remove by click)");
         return null;
     } else {
-        var startPoint = map[0];
-        var endPoint = map[1];
-        return {
-            x1 : startPoint.x,
-            x2 : endPoint.x,
-            y1 : startPoint.y,
-            y2 : endPoint.y,
-            xLen : endPoint.x - startPoint.x,
-            yLen : endPoint.y - startPoint.y
-        };
+        var result = [];
+        $.each(map, function(i, val) {
+            var alias = (i + 1).toString();
+            result["x" + alias] = val.x;
+            result["y" + alias] = val.y;
+        });
+        return result;
     }
 }
 
@@ -174,7 +246,6 @@ function showPoint(pointId) {
 // th or td and count
 function appendRow(type, size) {
     if (arguments.length == size + 2) {
-
         var row = "<tr onmouseover=\"showPoint('" + arguments[2] + "');\">";
         for (var i = 2; i < size + 2; i++) {
             row += "<" + type + ">" + arguments[i] + "</" + type + ">";
@@ -187,28 +258,13 @@ function appendRow(type, size) {
 Math.sign = function (value) {
     if (value == 0) return 0;
     else return value > 0 ? 1 : -1;
-}
+};
 
 function draw2Points() {
     clearCanvas();
     resetScale();
     drawPoint(0, 0);
     drawPoint(9, 4);
-}
-
-function testCase1() {
-    draw2Points();
-    drawCDA();
-}
-
-function testCase2() {
-    draw2Points();
-    drawBrez();
-}
-
-function testCase3() {
-    draw2Points();
-    drawWu();
 }
 
 function ipart(x) {
@@ -223,75 +279,11 @@ function rfpart(x) {
     return 1 - fpart(x);
 }
 
-function drawWu() {
-    var pts = returnPoints();
-    if (pts != null) {
-        iteratorWu(pts.x1, pts.y1, pts.x2, pts.y2);
-    }
-}
-
 function drawPointBrighter(swapAxes, x, y, c) {
     if (c > 0 && c < 1)
         context.fillStyle = increase_brightness(POINT_COLOR, 100 * (1 - c));
     if (swapAxes) drawPoint(y, x);
     else drawPoint(x, y);
-};
-
-function iteratorWu(x1, y1, x2, y2) {
-
-    var dx = x2 - x1;
-    var dy = y2 - y1;
-    var swapAxes = false;
-
-    if (Math.abs(dx) < Math.abs(dy)) {
-        swapAxes = true;
-        var t;
-        t = x1;
-        x1 = y1;
-        y1 = t;
-        t = x2;
-        x2 = y2;
-        y2 = t;
-        t = dx;
-        dx = dy;
-        dy = t;
-    }
-    if (x2 < x1) {
-        t = x1;
-        x1 = x2;
-        x2 = t;
-        t = y1;
-        y1 = y2;
-        y2 = t;
-    }
-    var gradient = dy / dx;
-
-    // handle first endpoint
-    var xend = Math.round(x1);
-    var yend = y1 + gradient * (xend - x1);
-    var xgap = rfpart(x1 + 0.5);
-    var xpxl1 = xend;  // this will be used in the main loop
-    var ypxl1 = ipart(yend);
-
-    drawPointBrighter(swapAxes, xpxl1, ypxl1, rfpart(yend) * xgap);
-    drawPointBrighter(swapAxes, xpxl1, ypxl1 + 1, fpart(yend) * xgap);
-    var intery = yend + gradient; // first y-intersection for the main loop
-
-    // handle second endpoint
-    xend = Math.round(x2);
-    yend = y2 + gradient * (xend - x2);
-    xgap = fpart(x2 + 0.5);
-    var xpxl2 = xend;  // this will be used in the main loop
-    var ypxl2 = ipart(yend);
-    drawPointBrighter(swapAxes, xpxl2, ypxl2, rfpart(yend) * xgap);
-    drawPointBrighter(swapAxes, xpxl2, ypxl2 + 1, fpart(yend) * xgap);
-
-    // main loop
-    for (x = xpxl1 + 1; x <= xpxl2 - 1; x++) {
-        drawPointBrighter(swapAxes, x, ipart(intery), rfpart(intery));
-        drawPointBrighter(swapAxes, x, ipart(intery) + 1, fpart(intery));
-        intery = intery + gradient;
-    }
 }
 
 function increase_brightness(hex, percent) {

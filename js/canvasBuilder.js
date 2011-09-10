@@ -28,6 +28,14 @@ function initCanvas() {
 
     drawField();
     initEvents();
+    $('#xPos').spinner({ min: -100, max: 100 });
+    $('#yPos').spinner({ min: -100, max: 100});
+    $('#step').spinner({ min: 1, max: 25 , step: 5 });
+    $('#radius').spinner({ min: 1, max: 50 , step: 5 });
+    $('#koef').spinner({ min: 1, max: 25 , step: 1 });
+    $("#accordion").accordion({
+        event: "click hoverintent"
+    });
 }
 
 function changeStep() {
@@ -65,7 +73,7 @@ function initEvents() {
     canvasElem.mousemove(function(e) {
         if (moveCanvas) {
             if (oldPosX != null && oldPosY != null) {
-                context.translate((e.pageX - oldPosX)/scaleFactor, (e.pageY - oldPosY)/scaleFactor);
+                context.translate((e.pageX - oldPosX) / scaleFactor, (e.pageY - oldPosY) / scaleFactor);
                 clearContext();
                 drawField();
             }
@@ -89,7 +97,6 @@ function scroll(e) {
         upScale();
     else
         downScale();
-    console.log(rolled);
 }
 
 function move(e) {
