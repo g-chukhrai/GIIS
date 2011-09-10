@@ -1,6 +1,7 @@
 var canvas, context;
 var width, height, halfWidth, halfHeight;
-var DEFAULT_STEP = 20;
+var canvasStep = 10;
+var scaleFactor = 1;
 var map = [];
 var canvasElem,info, steps;
 var moveCanvas = false;
@@ -22,10 +23,16 @@ function initCanvas() {
     halfWidth = width / 2;
     height = canvas.height;
     halfHeight = height / 2;
-    context.fillStyle = "blue";
 
     drawField();
     initEvents();
+}
+
+function changeStep() {
+    var newStep = parseInt($("#step").val());
+    if (newStep > 0 && newStep <= 25)
+        canvasStep = newStep;
+    clearCanvas();
 }
 
 var tid = 0;
@@ -86,13 +93,13 @@ function scroll(e) {
 function move(e) {
     var keyCode = e.keyCode;
     if (keyCode == 38)
-        context.translate(0, -DEFAULT_STEP);
+        context.translate(0, -canvasStep);
     else if (keyCode == 40)
-        context.translate(0, +DEFAULT_STEP);
+        context.translate(0, +canvasStep);
     else if (keyCode == 37)
-        context.translate(- DEFAULT_STEP, 0);
+        context.translate(- canvasStep, 0);
     else if (keyCode == 39)
-        context.translate(DEFAULT_STEP, 0);
+        context.translate(canvasStep, 0);
     else
         return;
     clearContext();
@@ -101,8 +108,8 @@ function move(e) {
 
 function mouseLocalCord(e) {
     var offset = canvasElem.offset();
-    var x = Math.floor((e.pageX - offset.left - halfWidth) / DEFAULT_STEP);
-    var y = Math.floor((e.pageY - offset.top - halfHeight) / DEFAULT_STEP);
+    var x = Math.floor((e.pageX - offset.left - halfWidth) / canvasStep / scaleFactor);
+    var y = Math.floor((e.pageY - offset.top - halfHeight) / canvasStep / scaleFactor);
     return {"x" : x, "y" : -y};
 }
 
@@ -110,6 +117,12 @@ function drawPoint(x, y) {
     if (arguments.length == 0) {
         x = parseInt($("#xPos").val());
         y = parseInt($("#yPos").val());
+    } else if (arguments.length == 1) {
+        var point = arguments[0];
+        x = point.x;
+        y = point.y;
+        context.fillRect(x * canvasStep, -y * canvasStep, canvasStep, canvasStep);
+        return;
     }
     var removeId;
     $.each(map, function(i, val) {
@@ -120,11 +133,11 @@ function drawPoint(x, y) {
     });
     if (removeId == null) {
         map.push({'x' : x, 'y' : y, 'z' : 1});
-        context.fillRect(x * DEFAULT_STEP, -y * DEFAULT_STEP, DEFAULT_STEP, DEFAULT_STEP);
+        context.fillRect(x * canvasStep, -y * canvasStep, canvasStep, canvasStep);
         info.html("Draw point on [" + x + "; " + y + "]");
     } else {
         map.splice(removeId, 1);
-        context.clearRect(x * DEFAULT_STEP, -y * DEFAULT_STEP, DEFAULT_STEP, DEFAULT_STEP);
+        context.clearRect(x * canvasStep, -y * canvasStep, canvasStep, canvasStep);
         info.html("Remove point on [" + x + "; " + y + "]");
     }
 }
@@ -152,12 +165,12 @@ function drawField() {
     context.strokeStyle = "#000";
     context.strokeRect(-halfWidth, -halfHeight, width, height);
 
-    for (var x = -halfWidth; x < halfWidth; x += DEFAULT_STEP) {
+    for (var x = -halfWidth; x < halfWidth; x += canvasStep) {
         context.moveTo(x, -halfHeight);
         context.lineTo(x, halfHeight);
     }
 
-    for (var y = -halfHeight; y < halfHeight; y += DEFAULT_STEP) {
+    for (var y = -halfHeight; y < halfHeight; y += canvasStep) {
         context.moveTo(halfWidth, y);
         context.lineTo(-halfWidth, y);
     }
@@ -165,45 +178,49 @@ function drawField() {
     context.stroke();
 
     //draw X
-    var leftWall = halfWidth - DEFAULT_STEP;
+    var leftWall = halfWidth - canvasStep;
     context.beginPath();
-    context.moveTo(-leftWall, DEFAULT_STEP);
-    context.lineTo(0, DEFAULT_STEP);
-    context.moveTo(DEFAULT_STEP, DEFAULT_STEP);
-    context.lineTo(leftWall, DEFAULT_STEP);
-    context.moveTo(leftWall - 5, 5 + DEFAULT_STEP);
-    context.lineTo(leftWall, DEFAULT_STEP);
-    context.lineTo(leftWall - 5, -5 + DEFAULT_STEP);
+    context.moveTo(-leftWall, canvasStep);
+    context.lineTo(0, canvasStep);
+    context.moveTo(canvasStep, canvasStep);
+    context.lineTo(leftWall, canvasStep);
+    context.moveTo(leftWall - 5, 5 + canvasStep);
+    context.lineTo(leftWall, canvasStep);
+    context.lineTo(leftWall - 5, -5 + canvasStep);
 
     //draw Y
-    var topWall = halfHeight - DEFAULT_STEP;
+    var topWall = halfHeight - canvasStep;
     context.moveTo(5, -topWall + 5);
     context.lineTo(0, -topWall);
     context.lineTo(-5, -topWall + 5);
     context.moveTo(0, -topWall);
     context.lineTo(0, 0);
-    context.moveTo(0, DEFAULT_STEP);
+    context.moveTo(0, canvasStep);
     context.lineTo(0, topWall);
 
     context.strokeStyle = "#000";
     context.stroke();
+    drawAllPoints();
+}
 
-    var mapCopy = map;
-    map = [];
-    $.each(mapCopy, function() {
-        drawPoint(this.x, this.y);
+function drawAllPoints() {
+    context.fillStyle = "blue";
+    $.each(map, function() {
+        drawPoint(this);
     });
     info.html("");
 }
 
 function upScale() {
     clearContext();
+    scaleFactor += 0.1;
     context.scale(1.1, 1.1);
     drawField();
 }
 
 function resetScale() {
     clearContext();
+    scaleFactor = 1;
     setCtxCenter();
     drawField();
 }
@@ -211,5 +228,6 @@ function resetScale() {
 function downScale() {
     clearContext();
     context.scale(0.9, 0.9);
+    scaleFactor -= 0.1;
     drawField();
 }

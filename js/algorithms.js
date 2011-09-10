@@ -83,10 +83,21 @@ function returnPoints() {
     }
 }
 
+function showPoint(pointId) {
+    drawAllPoints();
+    if (pointId != null) {
+        if (map && map.length > pointId) {
+            context.fillStyle = "red";
+            drawPoint(map[pointId]);
+        }
+    }
+}
+
 // th or td and count
 function appendRow(type, size) {
     if (arguments.length == size + 2) {
-        var row = "<tr>";
+
+        var row = "<tr onclick=\"showPoint(" + arguments[2] + ");\">";
         for (var i = 2; i < size + 2; i++) {
             row += "<" + type + ">" + arguments[i] + "</" + type + ">";
         }
