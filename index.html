@@ -9,6 +9,8 @@
     <script src="js/base/ui.spinner.min.js"></script>
     <script src="js/base/accordion.js"></script>
     <script src="js/init.js"></script>
+    <script src="js/drawing.js"></script>
+    <script src="js/helper.js"></script>
     <script src="js/canvas.js"></script>
     <script src="js/lines.js"></script>
     <script src="js/curves.js"></script>
@@ -20,7 +22,7 @@
     <link href="css/ui.spinner.css" rel="stylesheet"/>
 </head>
 <body>
-<div style="margin:50px; text-align:center;">
+<div style="margin:30px; text-align:center;">
     <div style="float:left;">
         <canvas height='600' width='800' id='canvas'>Refresh browser</canvas>
         <br/>
@@ -31,52 +33,61 @@
         <button onclick="upScale()" class="minibutton"><img src="images/zoom_in.png"/></button>
     </div>
 
-    <div style="float:left; margin-left:20px;max-width:350px;display: inline-block;">
+    <div style="float:left; margin-left:20px;max-width:360px;display: inline-block;">
         <div id="accordion">
 
             <h3>Lab 1</h3>
 
-            <div style="width:290px;">
+            <div style="width:300px;">
                 <label for="xPos">xPos:</label>
                 <input id="xPos" value="0" style="width: 40px" type="text"/>
                 <label for="yPos">yPos:</label>
                 <input id="yPos" value="0" style="width: 40px" type="text"/>
-                <button onclick="drawPoint()" class="minibutton width_100">Draw point</button>
+                <button onclick="drawPoint()" class="minibutton width_100">point</button>
                 <br/> <br/>
-                <button onclick="drawCDA()" class="minibutton width_100">Draw CDA</button>
-                <button onclick="draw2Points(); drawCDA();" class="minibutton width_100">Test case</button>
+                <button onclick="drawCDA()" class="minibutton width_100">CDA</button>
+                <button onclick="draw2Points(); drawCDA();" class="minibutton width_100">Test</button>
                 <br/>
-                <button onclick="drawBrez()" class="minibutton width_100">Draw Brezen</button>
-                <button onclick="draw2Points(); drawBrez();" class="minibutton width_100">Test case</button>
+                <button onclick="drawBrez()" class="minibutton width_100">Brezen</button>
+                <button onclick="draw2Points(); drawBrez();" class="minibutton width_100">Test</button>
                 <br/>
-                <button onclick="drawWu()" class="minibutton width_100">Draw Wu</button>
-                <button onclick="draw2Points(); drawWu();" class="minibutton width_100">Test case</button>
+                <button onclick="drawWu()" class="minibutton width_100">Wu</button>
+                <button onclick="draw2Points(); drawWu();" class="minibutton width_100">Test</button>
             </div>
 
             <h3>Lab 2</h3>
 
-            <div style="width:290px;">
+            <div style="width:300px;">
                 <label for="radius">radius:</label>
                 <input id="radius" value="10" style="width: 40px" type="text"/>
-                <button onclick="clearCanvas();resetScale();drawCircle()" class="minibutton width_100">Draw Circle
-                </button>
+                <button onclick="clearCanvas();drawCircle()" class="minibutton width_100">Circle</button>
+                <button onclick="drawCircleRandom()" class="minibutton width_100">Test</button>
                 <br/>
                 <label for="koef">koef:</label>
                 <input id="koef" value="10" style="width: 40px" type="text"/>
-                <button onclick="drawParabola()" class="minibutton width_100">Draw Parabola</button>
+                <button onclick="drawParabola()" class="minibutton width_100">Parabola</button>
+                <button onclick="drawParabolaRandom()" class="minibutton width_100">Test</button>
                 <br/>
+                <label for="a">a:</label>
+                <input id="a" value="20" style="width: 40px" type="text"/>
+                <label for="b">b:</label>
+                <input id="b" value="10" style="width: 40px" type="text"/>
+                <br/>
+                <button onclick="drawEllipse()" class="minibutton width_100">Ellipse</button>
+                <button onclick="drawEllipseRandom()" class="minibutton width_100">Test</button>
+
             </div>
 
             <h3>Canvas Settings</h3>
 
-            <div style="width:290px;">
+            <div style="width:300px;">
                 <label for="step">step:</label>
                 <input id="step" value="10" style="width: 40px" type="text"/>
                 <button onclick="changeStep()" class="minibutton width_100">Change step</button>
                 <button onclick="resetScale()" class="minibutton width_100">Reset scale</button>
             </div>
         </div>
-        <button onclick="clearCanvas()" class="minibutton " style="width:350px;">Clear canvas</button>
+        <button onclick="clearCanvas()" class="minibutton " style="width:360px;">Clear canvas</button>
 
 
         <div style="height:380px;width:300px;overflow: auto;">

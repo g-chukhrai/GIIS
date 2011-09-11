@@ -5,7 +5,7 @@ function drawCircle() {
     var D = 2 - 2 * y;
     var it = 0;
     map = [];
-    addToMap(x,y);
+    addToMap(x, y);
     while (y > lim) {
         var d;
         if (D < 0) {
@@ -33,17 +33,26 @@ function drawCircle() {
             y--;
             D += 2 * x - 2 * y + 2;
         }
-        addToMap(x,y);
+        addToMap(x, y);
     }
     //reflection
     $.each(map, function() {
         var x = this.x, y = this.y;
-        addToMap(-x,y);
-        addToMap(-x,-y);
-        addToMap(x,-y);
+        addToMap(-x, y);
+        addToMap(-x, -y);
+        addToMap(x, -y);
     });
     drawAllPoints();
 }
+
+function drawCircleRandom() {
+    var limit = (halfWidth / canvasStep) - 10;
+    var radius = Math.floor(Math.random() * limit);
+    $("#radius").val(radius);
+    clearCanvas();
+    drawCircle();
+}
+
 function drawParabola() {
     var pts = returnPoints(1);
     if (pts != null) {
@@ -89,4 +98,41 @@ function drawParabola() {
             }
         }
     }
+}
+
+function drawParabolaRandom() {
+    var limit = (halfWidth / canvasStep) - 10;
+    var koef = Math.floor(Math.random() * limit);
+    $("#koef").val(koef);
+    clearCanvas();
+    drawRandomPoint(-limit, limit);
+    drawParabola();
+}
+
+function drawEllipse() {
+    var pts = returnPoints(1);
+    if (pts != null) {
+        var a = parseInt($("#a").val());
+        var b = parseInt($("#b").val());
+        for (var i = 0; i < 360; i++) {
+            var alpha = i * (Math.PI / 180);
+            var sinAlpha = Math.sin(alpha);
+            var cosAlpha = Math.cos(alpha);
+            var x = Math.floor(pts.x1 + (a * cosAlpha));
+            var y = Math.floor(pts.y1 + (b * sinAlpha));
+            addToMap(x, y);
+        }
+        drawAllPoints();
+    }
+}
+
+function drawEllipseRandom() {
+    var limit = (halfWidth / canvasStep) - 10;
+    var a = Math.floor(Math.random() * limit);
+    var b = Math.floor(Math.random() * limit);
+    $("#a").val(a);
+    $("#b").val(b);
+    clearCanvas();
+    drawRandomPoint(-limit, limit);
+    drawEllipse();
 }

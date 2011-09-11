@@ -35,6 +35,8 @@ function initJQueryComponents() {
     $('#step').spinner({ min: 1, max: 25 , step: 5 });
     $('#radius').spinner({ min: 1, max: 50 , step: 5 });
     $('#koef').spinner({ min: 1, max: 25 , step: 1 });
+    $('#a').spinner({ min: 1, max: 50 , step: 1 });
+    $('#b').spinner({ min: 1, max: 50 , step: 1 });
     $("#accordion").accordion({event: "click hoverintent"});
 }
 
