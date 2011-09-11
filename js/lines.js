@@ -209,7 +209,7 @@ function drawPoint(x, y) {
         }
     });
     if (removeId == null) {
-        map.push({'x' : x, 'y' : y, 'z' : 1});
+        addToMap(x,y);
         context.fillRect(x * canvasStep, -y * canvasStep, canvasStep, canvasStep);
         info.html("Draw point on [" + x + "; " + y + "]");
     } else {
@@ -217,6 +217,10 @@ function drawPoint(x, y) {
         context.clearRect(x * canvasStep, -y * canvasStep, canvasStep, canvasStep);
         info.html("Remove point on [" + x + "; " + y + "]");
     }
+}
+
+function addToMap(x,y) {
+    map.push({'x' : x, 'y' : y, 'z' : 1});
 }
 
 function returnPoints(count) {

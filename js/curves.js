@@ -5,7 +5,7 @@ function drawCircle() {
     var D = 2 - 2 * y;
     var it = 0;
     map = [];
-    drawPoint(x, y);
+    addToMap(x,y);
     while (y > lim) {
         var d;
         if (D < 0) {
@@ -33,17 +33,24 @@ function drawCircle() {
             y--;
             D += 2 * x - 2 * y + 2;
         }
-        drawPoint(x, y);
+        addToMap(x,y);
     }
+    //reflection
+    $.each(map, function() {
+        var x = this.x, y = this.y;
+        addToMap(-x,y);
+        addToMap(-x,-y);
+        addToMap(x,-y);
+    });
+    drawAllPoints();
 }
-
 function drawParabola() {
     var pts = returnPoints(1);
     if (pts != null) {
         var x = 0;
         var y = 0;
         var p = parseInt($("#koef").val());
-        var lim = (p != 0) ? -Math.abs(20 - pts.x1) : 0;
+        var lim = (p != 0) ? -Math.abs(pts.x1 + halfWidth / canvasStep) : 0;
         var D = p == 1 ? 0 : -1;
         var it = 0;
         while (x >= lim) {
