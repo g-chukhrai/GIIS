@@ -99,13 +99,15 @@ function showPoint(pointId) {
 }
 
 function drawPointBrighter(swapAxes, x, y, c) {
-    if (c > 0 && c < 1)
-        context.fillStyle = increase_brightness(POINT_COLOR, 100 * (1 - c));
+    var increasePercent = Math.round(100 * (1 - c));
+	context.fillStyle = increase_brightness(POINT_COLOR, increasePercent);
     if (swapAxes) drawPoint(y, x);
     else drawPoint(x, y);
 }
 
 function increase_brightness(hex, percent) {
+    if (percent == 100) return "#fff";
+    
     var r = parseInt(hex.substr(1, 2), 16),
             g = parseInt(hex.substr(3, 2), 16),
             b = parseInt(hex.substr(5, 2), 16);
