@@ -109,6 +109,7 @@ function drawWu() {
         var xgap = rfpart(x1 + 0.5);
         var xpxl1 = xend;  // this will be used in the main loop
         var ypxl1 = ipart(yend);
+    	map=[];    
         drawPointBrighter(swapAxes, xpxl1, ypxl1, rfpart(yend) * xgap);
         drawPointBrighter(swapAxes, xpxl1, ypxl1 + 1, fpart(yend) * xgap);
         var intery = yend + gradient; // first y-intersection for the main loop
