@@ -6,8 +6,8 @@ function drawCDA() {
         var length = Math.max(Math.abs(xLen), Math.abs(yLen));
         var dx = xLen / length;
         var dy = yLen / length;
-        var x = pts.x1 + 0.5 * Math.sign(dx);
-        var y = pts.y1 + 0.5 * Math.sign(dy);
+        var x = pts.x1 + 0.5;
+        var y = pts.y1 + 0.5;
         map = [];
         steps.html("");
         appendRow("th", 4, 'i', 'x', 'y', 'Point(x,y)');
@@ -78,72 +78,25 @@ function drawWu() {
 
         var dx = x2 - x1;
         var dy = y2 - y1;
-        var swapAxes = false;
+        var swapAxes = Math.abs(dx) < Math.abs(dy);
 
-        if (Math.abs(dx) < Math.abs(dy)) {
-            swapAxes = true;
-            var t;
-            t = x1;
-            x1 = y1;
-            y1 = t;
-            t = x2;
-            x2 = y2;
-            y2 = t;
-            t = dx;
-            dx = dy;
-            dy = t;
+        if (swapAxes) {
+            var t = x1; x1 = y1; y1 = t;
+            t = x2; x2 = y2; y2 = t;
+            t = dx; dx = dy; dy = t;
         }
         if (x2 < x1) {
-            t = x1;
-            x1 = x2;
-            x2 = t;
-            t = y1;
-            y1 = y2;
-            y2 = t;
+            t = x1; x1 = x2; x2 = t;
+            t = y1; y1 = y2; y2 = t;
         }
-        var gradient = dy / dx;
-
-        // handle first endpoint
-        var xend = Math.round(x1);
-        var yend = y1 + gradient * (xend - x1);
-        var xgap = rfpart(x1 + 0.5);
-        var xpxl1 = xend;  // this will be used in the main loop
-        var ypxl1 = ipart(yend);
-    	map=[];    
-        drawPointBrighter(swapAxes, xpxl1, ypxl1, rfpart(yend) * xgap);
-        drawPointBrighter(swapAxes, xpxl1, ypxl1 + 1, fpart(yend) * xgap);
-        var intery = yend + gradient; // first y-intersection for the main loop
-
-        // handle second endpoint
-        xend = Math.round(x2);
-        yend = y2 + gradient * (xend - x2);
-        xgap = fpart(x2 + 0.5);
-        var xpxl2 = xend;  // this will be used in the main loop
-        var ypxl2 = ipart(yend);
-        drawPointBrighter(swapAxes, xpxl2, ypxl2, rfpart(yend) * xgap);
-        drawPointBrighter(swapAxes, xpxl2, ypxl2 + 1, fpart(yend) * xgap);
-
-        // main loop
-
-//        map = [];
-//        steps.html("");
-//        appendRow("th", 4, 'i', 'x', 'y', 'c');
-        for (x = xpxl1 + 1; x <= xpxl2 - 1; x++) {
-            var ipa = ipart(intery);
-            var rfpa = rfpart(intery);
-            var fpa = fpart(intery);
-//            appendRow("td", 4, x, swapAxes ? x : ipa, swapAxes ? ipa : x, Math.round(rfpa * 100));
-//            appendRow("td", 4, x, swapAxes ? x : ipa + 1, swapAxes ? ipa + 1 : x, Math.round(fpa * 100));
-            drawPointBrighter(swapAxes, x, ipa, rfpa);
-            drawPointBrighter(swapAxes, x, ipa + 1, fpa);
-            intery = intery + gradient;
+        var de = dy / dx;
+        var yend = y1 + de * (Math.round(x1) - x1);
+        var e = yend + de; 
+        for (x = Math.round(x1) + 1; x <= Math.round(x2) - 1; x++) {
+            var ipa = ipart(e);
+            drawPointBrighter(swapAxes, x, ipa, rfpart(e));
+            drawPointBrighter(swapAxes, x, ipa + 1, fpart(e));
+            e = e + de;
         }
     }
 }
-
-
-
-
-
-
-
