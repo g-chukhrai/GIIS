@@ -12,8 +12,8 @@ var tid = 0;
 var speed = 100;
 
 //Point moving
-var controlMap = []; //массив "контрольных точек" 
-var movingPointNumber; //индекс перемещаемой контрольной точки в массиве controlMap
+var controlMap = []; //РјР°СЃСЃРёРІ "РєРѕРЅС‚СЂРѕР»СЊРЅС‹С… С‚РѕС‡РµРє" 
+var movingPointNumber; //РёРЅРґРµРєСЃ РїРµСЂРµРјРµС‰Р°РµРјРѕР№ РєРѕРЅС‚СЂРѕР»СЊРЅРѕР№ С‚РѕС‡РєРё РІ РјР°СЃСЃРёРІРµ controlMap
 var algorythmType; 
 
 var MODE = {

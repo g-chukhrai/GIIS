@@ -40,7 +40,7 @@ function rfpart(x) {
     return 1 - fpart(x);
 }
 
-//Функция проверки существования "контрольной точки" в координатах х,у
+//Р¤СѓРЅРєС†РёСЏ РїСЂРѕРІРµСЂРєРё СЃСѓС‰РµСЃС‚РІРѕРІР°РЅРёСЏ "РєРѕРЅС‚СЂРѕР»СЊРЅРѕР№ С‚РѕС‡РєРё" РІ РєРѕРѕСЂРґРёРЅР°С‚Р°С… С…,Сѓ
 function controlPointExists(x, y)
 {
 	var containPoint = false;
@@ -52,7 +52,7 @@ function controlPointExists(x, y)
 	return containPoint;
 }
 
-//Функция получения номера "контрольной точке" в массиве controlMap
+//Р¤СѓРЅРєС†РёСЏ РїРѕР»СѓС‡РµРЅРёСЏ РЅРѕРјРµСЂР° "РєРѕРЅС‚СЂРѕР»СЊРЅРѕР№ С‚РѕС‡РєРµ" РІ РјР°СЃСЃРёРІРµ controlMap
 function getPointNumber(x, y) {
 	var pointNumber = 0;
 	var i = 0;
@@ -65,12 +65,12 @@ function getPointNumber(x, y) {
 	return pointNumber;
 }
 
-//Функция изменения положения точки с порядковым номером number в массиве controlMap
+//Р¤СѓРЅРєС†РёСЏ РёР·РјРµРЅРµРЅРёСЏ РїРѕР»РѕР¶РµРЅРёСЏ С‚РѕС‡РєРё СЃ РїРѕСЂСЏРґРєРѕРІС‹Рј РЅРѕРјРµСЂРѕРј number РІ РјР°СЃСЃРёРІРµ controlMap
 function changePointPosition(x, y, number) {
 	controlMap[number] = {'x' : x, 'y' : y, 'z' : 1};
 }
 
-//Функция отрисовки алгоритма (используется во время перемещения "контрольной точки")
+//Р¤СѓРЅРєС†РёСЏ РѕС‚СЂРёСЃРѕРІРєРё Р°Р»РіРѕСЂРёС‚РјР° (РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РІРѕ РІСЂРµРјСЏ РїРµСЂРµРјРµС‰РµРЅРёСЏ "РєРѕРЅС‚СЂРѕР»СЊРЅРѕР№ С‚РѕС‡РєРё")
 function drawAlgorythm() {
 	clearStandartMap();
 	switch(algorythmType) {
