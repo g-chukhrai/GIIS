@@ -56,18 +56,6 @@ function changePointPosition(x, y, number) {
     controlMap[number] = {'x' : x, 'y' : y, 'z' : 1};
 }
 
-//Функция отрисовки алгоритма (используется во время перемещения "контрольной точки")
-function drawAlgorithm(isRandom) {
-    clearStandartMap();
-    if (algorithmType == 1) {
-        drawHermite(isRandom);
-    } else if (algorithmType == 2) {
-        drawBezier(isRandom);
-    } else if (algorithmType == 3) {
-        drawBSpline(isRandom);
-    }
-}
-
 function createMatrix(mm, qq) {
     var result = new Array(mm);
     for (var m = 0; m < mm; m++) {
@@ -93,3 +81,22 @@ function multiplyMatrix(m1, m2) {
     }
     return result;
 }
+
+function getPoints() {
+    for (var i = 0; i < controlMap.length; i++) {
+        l3_points[i] = [controlMap[i].x, controlMap[i].y];
+    }
+}
+
+function getRandomPoints(count) {
+    if (arguments.length == 0) count = 4;
+    clearCanvas();
+    resetScale();
+    var limit = (halfWidth / canvasStep) - 10;
+
+    for (var i = 0; i < count; i++) {
+        addToMap(Math.rand(-limit, limit), Math.rand(-limit, limit), true);
+    }
+    drawAllPoints();
+}
+

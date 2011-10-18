@@ -14,6 +14,8 @@ var speed = 100;
 var controlMap = []; //массив "контрольных точек"
 var movingPointNumber; //индекс перемещаемой контрольной точки в массиве controlMap
 var algorithmType;
+var posX;
+var posY;
 
 var MODE = {
     MAIN: "MAIN",
@@ -62,12 +64,6 @@ function initJQueryComponents() {
 //	$('#accordion').accordion({event: "click hoverintent"});
 }
 
-function curMode() {
-    console.log(mode);
-}
-
-var posX;
-var posY;
 
 function initEvents() {
     canvasElem.mousedown(function(e) {
@@ -82,15 +78,12 @@ function initEvents() {
 
     });
 
-    canvasElem.mouseup(function(e) {
+    canvasElem.mouseup(function() {
         if (mode == MODE.DRAW_POINT) {
             drawPoint(posX, posY);
-            if (algorithmType != undefined) {
-                movingPointNumber = controlPointExists(posX, posY);
-                if (movingPointNumber == null) {
-                    addToMap(posX, posY, true);
-                    drawAllPoints();
-                }
+            if (algorithmType != null && movingPointNumber == null) {
+                addToMap(posX, posY, true);
+                drawAllPoints();
             }
         } else if (mode == MODE.MOVE_POINT) {
             mode = MODE.MAIN;

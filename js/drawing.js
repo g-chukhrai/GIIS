@@ -3,12 +3,12 @@ function drawAllPoints() {
     $.each(map, function() {
         drawPoint(this);
     });
-	
+
 	context.fillStyle = POINT_CONTROL_COLOR;
 	$.each(controlMap, function() {
 		drawPoint(this);
 	});
-	
+
     info.html("");
 }
 
@@ -114,7 +114,7 @@ function drawPointBrighter(swapAxes, x, y, c) {
 
 function increase_brightness(hex, percent) {
     if (percent == 100) return "#fff";
-    
+
     var r = parseInt(hex.substr(1, 2), 16),
             g = parseInt(hex.substr(3, 2), 16),
             b = parseInt(hex.substr(5, 2), 16);
@@ -135,4 +135,16 @@ function draw2Points() {
 
 function drawRandomPoint(from, to) {
     drawPoint(Math.rand(from, to), Math.rand(from, to));
+}
+
+//Функция отрисовки алгоритма (используется во время перемещения "контрольной точки")
+function drawAlgorithm(isRandom) {
+    clearStandartMap();
+    if (algorithmType == 1) {
+        drawHermite(isRandom);
+    } else if (algorithmType == 2) {
+        drawBezier(isRandom);
+    } else if (algorithmType == 3) {
+        drawBSpline(isRandom);
+    }
 }

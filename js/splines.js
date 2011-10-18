@@ -1,24 +1,6 @@
 var l3_points = [];
 var step;
 
-function getPoints() {
-    for (var i = 0; i < controlMap.length; i++) {
-        l3_points[i] = [controlMap[i].x, controlMap[i].y];
-    }
-}
-
-function getRandomPoints(count) {
-    if (arguments.length == 0) count = 4;
-    clearCanvas();
-    resetScale();
-    var limit = (halfWidth / canvasStep) - 10;
-
-    for (var i = 0; i < count; i++) {
-        addToMap(Math.rand(-limit, limit), Math.rand(-limit, limit), true);
-    }
-    drawAllPoints();
-}
-
 function drawHermite(isRandom) {
     step = 0.001;
     if (isRandom) getRandomPoints();
