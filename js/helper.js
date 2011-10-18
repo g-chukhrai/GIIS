@@ -57,21 +57,14 @@ function changePointPosition(x, y, number) {
 }
 
 //Функция отрисовки алгоритма (используется во время перемещения "контрольной точки")
-function drawAlgorythm() {
+function drawAlgorithm(isRandom) {
     clearStandartMap();
-    switch (algorithmType) {
-        case 1: {
-            drawHermite(false);
-            break;
-        }
-        case 2: {
-            drawBezier(false);
-            break;
-        }
-        case 3: {
-            drawBSpline(false);
-            break;
-        }
+    if (algorithmType == 1) {
+        drawHermite(isRandom);
+    } else if (algorithmType == 2) {
+        drawBezier(isRandom);
+    } else if (algorithmType == 3) {
+        drawBSpline(isRandom);
     }
 }
 

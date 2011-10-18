@@ -10,7 +10,6 @@ var POINT_CONTROL_COLOR = "#ff0000";
 var POINT_HOVER_COLOR = "#ff0000";
 var tid = 0;
 var speed = 100;
-//Point moving
 
 var controlMap = []; //массив "контрольных точек"
 var movingPointNumber; //индекс перемещаемой контрольной точки в массиве controlMap
@@ -47,8 +46,9 @@ $(function() {
 
 });
 
-function setMode(mode) {
+function setMode(mode, isRandom) {
     algorithmType = mode;
+    drawAlgorithm(isRandom);
 }
 
 function initJQueryComponents() {
@@ -85,6 +85,13 @@ function initEvents() {
     canvasElem.mouseup(function(e) {
         if (mode == MODE.DRAW_POINT) {
             drawPoint(posX, posY);
+            if (algorithmType != undefined) {
+                movingPointNumber = controlPointExists(posX, posY);
+                if (movingPointNumber == null) {
+                    addToMap(posX, posY, true);
+                    drawAllPoints();
+                }
+            }
         } else if (mode == MODE.MOVE_POINT) {
             mode = MODE.MAIN;
             movingPointNumber = null;
@@ -111,10 +118,10 @@ function initEvents() {
             }
             if (movingPointNumber != null) {
                 changePointPosition(mouseLocalCord(e).x, mouseLocalCord(e).y, movingPointNumber);
-                drawAlgorythm();
+                drawAlgorithm(false);
             }
         } else if (algorithmType == 3) {
-            drawAlgorythm();
+            drawAlgorithm(false);
         } else info.html("x: " + mouseLocalCord(e).x + " y: " + mouseLocalCord(e).y);
 
     });

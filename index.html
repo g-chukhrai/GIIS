@@ -8,7 +8,7 @@
     <script src="js/base/jquery-ui-1.8.16.custom.min.js"></script>
     <script src="js/base/ui.spinner.min.js"></script>
     <script src="js/base/accordion.js"></script>
-	<script src="js/base/interface.js"></script>
+    <script src="js/base/interface.js"></script>
     <script src="js/init.js"></script>
     <script src="js/drawing.js"></script>
     <script src="js/helper.js"></script>
@@ -22,8 +22,8 @@
     <link href="css/main.css" rel="stylesheet"/>
     <link href="css/jquery-ui-1.8.16.custom.css" rel="stylesheet"/>
     <link href="css/ui.spinner.css" rel="stylesheet"/>
-	<link href="css/tooltip.css" rel="stylesheet"/>
-	
+    <link href="css/tooltip.css" rel="stylesheet"/>
+
 </head>
 <body>
 <div style="margin:30px; text-align:center;">
@@ -32,19 +32,20 @@
         <br/>
         <label id="info"></label>
         <br/>
-		<script type="text/javascript">
-		$('button').ToolTip(
-			{
-				className: 'inputsTooltip',
-				position: 'mouse',
-				delay: 200
-			}
-		);
-		</script>
+        <script type="text/javascript">
+            $('button').ToolTip(
+            {
+                className: 'inputsTooltip',
+                position: 'mouse',
+                delay: 200
+            }
+                    );
+        </script>
         <button onclick="downScale()" title="Zoom Out" class="minibutton"><img src="images/zoom_out.png"/></button>
-        <button onclick="resetScale()" title="Change to default" class="minibutton"><img src="images/table.png"/></button>
+        <button onclick="resetScale()" title="Change to default" class="minibutton"><img src="images/table.png"/>
+        </button>
         <button onclick="upScale()" title="Zoom In" class="minibutton"><img src="images/zoom_in.png"/></button>
-		
+
         <div style="height:380px;width:600px;overflow: auto;">
             <table id="steps"></table>
         </div>
@@ -94,42 +95,42 @@
                 <button onclick="drawEllipseRandom()" class="minibutton width_100">Test</button>
 
             </div>
-          	
-			<h3>Lab 3</h3>
-			
-			<div style="width:300px;">
-					<label for="p1x">p1x:</label>
-					<input id="p1x" value="20" style="width: 40px" type="text"/>
-					<label for="p1y">p1y:</label>
-					<input id="p1y" value="0" style="width: 40px" type="text"/>
 
-					<label for="p4x">p4x:</label>
-					<input id="p4x" value="20" style="width: 40px" type="text"/>
-					<label for="p4y">p4y:</label>
-					<input id="p4y" value="10" style="width: 40px" type="text"/>
+            <h3>Lab 3</h3>
 
-					<label for="r1x">r1x:</label>
-					<input id="r1x" value="10" style="width: 40px" type="text"/>
-					<label for="r1y">r1y:</label>
-					<input id="r1y" value="10" style="width: 40px" type="text"/>
+            <div style="width:300px;">
+                <label for="p1x">p1x:</label>
+                <input id="p1x" value="20" style="width: 40px" type="text"/>
+                <label for="p1y">p1y:</label>
+                <input id="p1y" value="0" style="width: 40px" type="text"/>
 
-					<label for="r4x">r4x:</label>
-					<input id="r4x" value="30" style="width: 40px" type="text"/>
-					<label for="r4y">r4y:</label>
-					<input id="r4y" value="20" style="width: 40px" type="text"/>
+                <label for="p4x">p4x:</label>
+                <input id="p4x" value="20" style="width: 40px" type="text"/>
+                <label for="p4y">p4y:</label>
+                <input id="p4y" value="10" style="width: 40px" type="text"/>
 
-					<button onclick="setMode(1); drawHermite()" class="minibutton width_100">Hermite</button>
-					<button onclick="setMode(1); drawHermite(true)" class="minibutton width_100">Test</button>
-					<br/>
+                <label for="r1x">r1x:</label>
+                <input id="r1x" value="10" style="width: 40px" type="text"/>
+                <label for="r1y">r1y:</label>
+                <input id="r1y" value="10" style="width: 40px" type="text"/>
 
-					<button onclick="setMode(2); drawBezier()" class="minibutton width_100">Brezier</button>
-					<button onclick="setMode(2); drawBezier(true)" class="minibutton width_100">Test</button>
-					<br/>
-					
-					<button onclick="setMode(3); drawBSpline()" class="minibutton width_100">BSpline</button>
-					<button onclick="setMode(3); drawBSpline(true)" class="minibutton width_100">Test</button>
-				</div>
-				  
+                <label for="r4x">r4x:</label>
+                <input id="r4x" value="30" style="width: 40px" type="text"/>
+                <label for="r4y">r4y:</label>
+                <input id="r4y" value="20" style="width: 40px" type="text"/>
+
+                <button onclick="setMode(1,false);" class="minibutton width_100">Hermite</button>
+                <button onclick="setMode(1,true);" class="minibutton width_100">Test</button>
+                <br/>
+
+                <button onclick="setMode(2,false);" class="minibutton width_100">Brezier</button>
+                <button onclick="setMode(2,true);" class="minibutton width_100">Test</button>
+                <br/>
+
+                <button onclick="setMode(3,false);" class="minibutton width_100">BSpline</button>
+                <button onclick="setMode(3,true);" class="minibutton width_100">Test</button>
+            </div>
+
 
             <h3>Canvas Settings</h3>
 
