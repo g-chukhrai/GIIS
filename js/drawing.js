@@ -3,6 +3,12 @@ function drawAllPoints() {
     $.each(map, function() {
         drawPoint(this);
     });
+	
+	context.fillStyle = POINT_CONTROL_COLOR;
+	$.each(controlMap, function() {
+		drawPoint(this);
+	});
+	
     info.html("");
 }
 
@@ -84,6 +90,7 @@ function returnPoints(count) {
             var alias = (i + 1).toString();
             result["x" + alias] = val.x;
             result["y" + alias] = val.y;
+            result["z" + alias] = 1;
         });
         return result;
     }

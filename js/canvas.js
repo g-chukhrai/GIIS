@@ -50,8 +50,14 @@ function setCtxCenter() {
 
 function clearCanvas() {
     map = [];
+	controlMap = [];
     resetScale();
     steps.html("");
+}
+
+function clearStandartMap() {
+	map = [];
+	resetScale();
 }
 
 function clearContext() {

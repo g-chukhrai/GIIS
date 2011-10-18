@@ -22,7 +22,6 @@ $.event.special.hoverintent = {
             cY = event.pageY;
         }
 
-        ;
         pX = event.pageX;
         pY = event.pageY;
         function clear() {
