@@ -10,23 +10,22 @@ var POINT_CONTROL_COLOR = "#ff0000";
 var POINT_HOVER_COLOR = "#ff0000";
 var tid = 0;
 var speed = 100;
-
 //Point moving
-var controlMap = []; //массив "контрольных точек" 
+
+var controlMap = []; //массив "контрольных точек"
 var movingPointNumber; //индекс перемещаемой контрольной точки в массиве controlMap
-var algorythmType; 
+var algorithmType;
 
 var MODE = {
-	MAIN:0,
-  MOVE_CANVAS :1,
-  SCALE_CANVAS : 2,
-  DRAW_POINT: 3,
-  DELETE_POINT :4,
-  MOVE_POINT: 5
+    MAIN: "MAIN",
+    MOVE_CANVAS : "MOVE_CANVAS",
+    SCALE_CANVAS : "SCALE_CANVAS",
+    DRAW_POINT: "DRAW_POINT",
+    DELETE_POINT : "DELETE_POINT",
+    MOVE_POINT: "MOVE_POINT"
 };
-  
-var mode = MODE.MAIN;
 
+var mode = MODE.MAIN;
 
 $(function() {
     canvas = document.getElementById("canvas");
@@ -44,12 +43,12 @@ $(function() {
     drawField();
     initEvents();
     initJQueryComponents();
-	clearCanvas();
-	
+    clearCanvas();
+
 });
 
 function setMode(mode) {
-	algorythmType = mode;
+    algorithmType = mode;
 }
 
 function initJQueryComponents() {
@@ -61,43 +60,40 @@ function initJQueryComponents() {
     $('#a').spinner({ min: 1, max: 50 , step: 1 });
     $('#b').spinner({ min: 1, max: 50 , step: 1 });
 //	$('#accordion').accordion({event: "click hoverintent"});
-  
 }
 
+function curMode() {
+    console.log(mode);
+}
+
+var posX;
+var posY;
+
 function initEvents() {
-    canvasElem.mousedown(function() {
-	mode = MODE.DRAW_POINT;
-	if(tid==0) {
-	 tid = setInterval(function(){	
-		mode = MODE.MOVE_POINT;
-	 },speed);
-	}});
-	
+    canvasElem.mousedown(function(e) {
+        mode = MODE.DRAW_POINT;
+        posX = mouseLocalCord(e).x;
+        posY = mouseLocalCord(e).y;
+        if (tid == 0) {
+            tid = setInterval(function() {
+                mode = MODE.MOVE_POINT;
+            }, speed);
+        }
+
+    });
 
     canvasElem.mouseup(function(e) {
-		var posX = mouseLocalCord(e).x;
-		var posY = mouseLocalCord(e).y;
-		if (mode == MODE.DRAW_POINT){
-            drawPoint(posX, posY);		
-		} else if (mode == MODE.MOVE_POINT){
-			mode = MODE.MAIN;
-		}
+        if (mode == MODE.DRAW_POINT) {
+            drawPoint(posX, posY);
+        } else if (mode == MODE.MOVE_POINT) {
+            mode = MODE.MAIN;
+            movingPointNumber = null;
+        }
         toggleOff();
     });
 
     canvasElem.mousemove(function(e) {
-
-		if (mode == MODE.MOVE_POINT) {
-		var posX = mouseLocalCord(e).x;
-		var posY = mouseLocalCord(e).y;			
-		if (controlPointExists(posX, posY)) {
-				mode = MODE.MOVE_POINT;
-				movingPointNumber = getPointNumber(posX, posY);
-			} else {
-				addToMap(posX, posY, true);
-				drawAllPoints();
-			}
-		} else if (mode == MODE.MOVE_CANVAS) {
+        if (mode == MODE.MOVE_CANVAS) {
             if (oldPosX != null && oldPosY != null) {
                 context.translate((e.pageX - oldPosX) / scaleFactor, (e.pageY - oldPosY) / scaleFactor);
                 clearContext();
@@ -105,14 +101,24 @@ function initEvents() {
             }
             oldPosX = e.pageX;
             oldPosY = e.pageY;
-        } else if (mode == MODE.MOVE_POINT) {	
-			changePointPosition(mouseLocalCord(e).x, mouseLocalCord(e).y, movingPointNumber);
-			drawAlgorythm();
-		} else if (algorythmType == 3) {
-			drawAlgorythm();
-		} else info.html("x: " + mouseLocalCord(e).x + " y: " + mouseLocalCord(e).y);
+        } else if (mode == MODE.MOVE_POINT) {
+            if (movingPointNumber == null) {
+                movingPointNumber = controlPointExists(posX, posY);
+                if (movingPointNumber == null) {
+                    addToMap(posX, posY, true);
+                    drawAllPoints();
+                }
+            }
+            if (movingPointNumber != null) {
+                changePointPosition(mouseLocalCord(e).x, mouseLocalCord(e).y, movingPointNumber);
+                drawAlgorythm();
+            }
+        } else if (algorithmType == 3) {
+            drawAlgorythm();
+        } else info.html("x: " + mouseLocalCord(e).x + " y: " + mouseLocalCord(e).y);
+
     });
 
     window.addEventListener('keydown', move, true);
-    canvas.addEventListener('DOMMouseScroll', scroll, false);
+//    canvas.addEventListener('DOMMouseScroll', scroll, false);
 }

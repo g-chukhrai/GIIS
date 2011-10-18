@@ -1,10 +1,9 @@
 function addToMap(x, y, isState) {
-	if (arguments.length == 3) {
-		controlMap.push({'x' : x, 'y' : y, 'z' : 1});
-	}
-	else {
-		map.push({'x' : x, 'y' : y, 'z' : 1});
-	}
+    if (arguments.length == 3) {
+        controlMap.push({'x' : x, 'y' : y, 'z' : 1});
+    } else {
+        map.push({'x' : x, 'y' : y, 'z' : 1});
+    }
 }
 
 // th or td and count
@@ -26,7 +25,7 @@ Math.sign = function (value) {
 
 Math.rand = function(from, to) {
     return Math.floor(Math.random() * (from - to + 1)) + to;
-}
+};
 
 function ipart(x) {
     return Math.floor(x);
@@ -41,50 +40,63 @@ function rfpart(x) {
 }
 
 //Функция проверки существования "контрольной точки" в координатах х,у
-function controlPointExists(x, y)
-{
-	var containPoint = false;
-	$.each(controlMap, function() {
-		if (this.x == x && this.y == y) {
-			containPoint = true;
-		}
-	});
-	return containPoint;
-}
-
-//Функция получения номера "контрольной точке" в массиве controlMap
-function getPointNumber(x, y) {
-	var pointNumber = 0;
-	var i = 0;
-	$.each(controlMap, function() {
-		if (this.x == x && this.y == y) {
-			pointNumber = i;
-		}
-		i++;
-	});
-	return pointNumber;
+function controlPointExists(x, y) {
+    var index = null;
+    $.each(controlMap, function(i,val) {
+        if (val.x == x && val.y == y) {
+            index = i;
+            return false;
+        }
+    });
+    return index;
 }
 
 //Функция изменения положения точки с порядковым номером number в массиве controlMap
 function changePointPosition(x, y, number) {
-	controlMap[number] = {'x' : x, 'y' : y, 'z' : 1};
+    controlMap[number] = {'x' : x, 'y' : y, 'z' : 1};
 }
 
 //Функция отрисовки алгоритма (используется во время перемещения "контрольной точки")
 function drawAlgorythm() {
-	clearStandartMap();
-	switch(algorythmType) {
-		case 1: {
-			drawHermite();
-			break;
-		}
-		case 2: {
-			drawBezier();
-			break;
-		}
-		case 3: {
-			drawBSpline();
-			break;
-		}
-	}
+    clearStandartMap();
+    switch (algorithmType) {
+        case 1: {
+            drawHermite(false);
+            break;
+        }
+        case 2: {
+            drawBezier(false);
+            break;
+        }
+        case 3: {
+            drawBSpline(false);
+            break;
+        }
+    }
+}
+
+function createMatrix(mm, qq) {
+    var result = new Array(mm);
+    for (var m = 0; m < mm; m++) {
+        result[m] = new Array(qq);
+        for (var q = 0; q < qq; q++) {
+            result[m][q] = 0;
+        }
+    }
+    return result;
+}
+
+function multiplyMatrix(m1, m2) {
+    var mm = m1.length;
+    var nn = m1[0].length;
+    var qq = m2[0].length;
+    var result = createMatrix(mm, qq);
+    for (var m = 0; m < mm; m++) {
+        for (var q = 0; q < qq; q++) {
+            for (var n = 0; n < nn; n++) {
+                result[m][q] += m1[m][n] * m2[n][q];
+            }
+        }
+    }
+    return result;
 }
