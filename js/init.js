@@ -113,9 +113,13 @@ function initEvents() {
                 changePointPosition(mouseLocalCord(e).x, mouseLocalCord(e).y, movingPointNumber);
                 drawAlgorithm(false);
             }
-        } else if (algorithmType == 3) {
+        } else if (mode = MODE.MAIN) {
+            var x = mouseLocalCord(e).x;
+            var y = mouseLocalCord(e).y;
+            info.html("x: " + x + " y: " + y);
+        } else if (mode = MODE.DRAW_POINT && algorithmType == 3) {
             drawAlgorithm(false);
-        } else info.html("x: " + mouseLocalCord(e).x + " y: " + mouseLocalCord(e).y);
+        }
 
     });
 

@@ -4,11 +4,11 @@ function drawAllPoints() {
         drawPoint(this);
     });
 
-	context.fillStyle = POINT_CONTROL_COLOR;
-	$.each(controlMap, function() {
-		drawPoint(this);
-	});
-
+    context.fillStyle = POINT_CONTROL_COLOR;
+    $.each(controlMap, function() {
+        drawPoint(this);
+    });
+    context.fillStyle = POINT_COLOR;
     info.html("");
 }
 
@@ -49,7 +49,6 @@ function drawField() {
     context.stroke();
     drawAllPoints();
 }
-
 
 function drawPoint(x, y) {
     if (arguments.length == 0) {
@@ -107,7 +106,7 @@ function showPoint(pointId) {
 
 function drawPointBrighter(swapAxes, x, y, c) {
     var increasePercent = Math.round(100 * (1 - c));
-	context.fillStyle = increase_brightness(POINT_COLOR, increasePercent);
+    context.fillStyle = increase_brightness(POINT_COLOR, increasePercent);
     if (swapAxes) drawPoint(y, x);
     else drawPoint(x, y);
 }
