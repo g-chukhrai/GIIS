@@ -61,7 +61,7 @@ function initJQueryComponents() {
     $('#koef').spinner({ min: 1, max: 25 , step: 1 });
     $('#a').spinner({ min: 1, max: 50 , step: 1 });
     $('#b').spinner({ min: 1, max: 50 , step: 1 });
-//	$('#accordion').accordion({event: "click hoverintent"});
+//	$('#accordion').accordion();
 }
 
 

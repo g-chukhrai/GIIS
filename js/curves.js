@@ -186,8 +186,8 @@ function drawEllipse() {
     //Получение значений параметров эллипса из полей ввода
     a =  parseInt($("#a").val());
     b = parseInt($("#b").val());
-    x = 0
-    y = b
+    x = 0;
+    y = b;
     var D_next = b*b-a*a*(2*b-1); // Вычисление значения ошибки
     var lim = 0;
     var D = 0;

@@ -5,7 +5,7 @@
 .minibutton, .minibutton.disabled:hover {
     background: -moz-linear-gradient(center top, #F4F4F4, #ECECEC) repeat scroll 0 0 transparent;
     border: 1px solid #D4D4D4;
-    border-radius: 3px 3px 3px 3px;
+    border-radius: 3px;
     color: #333333;
     cursor: pointer;
     display: inline-block;
@@ -102,9 +102,9 @@ button.minibutton::-moz-focus-inner {
 }
 
 .minibutton img {
-width: 20px;
-height: 20px;
-border: 0;
+    width: 20px;
+    height: 20px;
+    border: 0;
 }
 
 

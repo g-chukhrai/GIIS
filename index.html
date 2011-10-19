@@ -7,9 +7,9 @@
     <script src="js/base/jquery-1.6.2.min.js"></script>
     <script src="js/base/jquery-ui-1.8.16.custom.min.js"></script>
     <script src="js/base/ui.spinner.min.js"></script>
-    <script src="js/base/accordion.js"></script>
     <script src="js/base/interface.js"></script>
     <script src="js/init.js"></script>
+    <script src="js/drawing.js"></script>
     <script src="js/helper.js"></script>
     <script src="js/canvas.js"></script>
     <script src="js/lines.js"></script>
@@ -31,15 +31,6 @@
         <br/>
         <label id="info"></label>
         <br/>
-        <script type="text/javascript">
-            $('button').ToolTip(
-            {
-                className: 'inputsTooltip',
-                position: 'mouse',
-                delay: 200
-            }
-                    );
-        </script>
         <button onclick="downScale()" title="Zoom Out" class="minibutton"><img src="images/zoom_out.png"/></button>
         <button onclick="resetScale()" title="Change to default" class="minibutton"><img src="images/table.png"/>
         </button>
@@ -55,7 +46,7 @@
 
             <h3>Lab 1</h3>
 
-            <div style="width:300px;">
+            <div>
                 <label for="xPos">xPos:</label>
                 <input id="xPos" value="0" style="width: 40px" type="text"/>
                 <label for="yPos">yPos:</label>
@@ -74,7 +65,7 @@
 
             <h3>Lab 2</h3>
 
-            <div style="width:300px;">
+            <div >
                 <label for="radius">radius:</label>
                 <input id="radius" value="10" style="width: 40px" type="text"/>
                 <button onclick="clearCanvas();drawCircle()" class="minibutton width_100">Circle</button>
@@ -97,7 +88,7 @@
 
             <h3>Lab 3</h3>
 
-            <div style="width:300px;">
+            <div >
                 <label for="p1x">p1x:</label>
                 <input id="p1x" value="20" style="width: 40px" type="text"/>
                 <label for="p1y">p1y:</label>
@@ -132,16 +123,15 @@
 
             <h3>Lab 4</h3>
 
-            <div style="width:300px;">
+            <div >
                 <button onclick="" class="minibutton width_100">Draw</button>
                 <button onclick="" class="minibutton width_100">Test</button>
                 <br/>
             </div>
 
-
             <h3>Canvas Settings</h3>
 
-            <div style="width:300px;">
+            <div >
                 <label for="step">step:</label>
                 <input id="step" value="10" style="width: 40px" type="text"/>
                 <button onclick="changeStep()" class="minibutton width_100">Change step</button>
@@ -149,7 +139,6 @@
             </div>
         </div>
         <button onclick="clearCanvas()" class="minibutton " style="width:360px;">Clear canvas</button>
-
     </div>
 </div>
 </body>
