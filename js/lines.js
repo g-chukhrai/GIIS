@@ -57,12 +57,19 @@ function drawCDA() {
 }
 
 //Функция отрисовки отрезка алгоритмом Брезенхема
-function drawBrez() {
-	/*
-	pts - переменная, хранящая координаты двух точек
-	returnPoints() - функция получения координат точек с холста
-	*/
-    var pts = returnPoints(2);
+function drawBrez(brez_points) {
+
+	var pts = [];
+	var only_one = true;
+    if (arguments.length < 1) pts = returnPoints(2);
+	else {
+		pts["x1"] = brez_points[0].x;
+		pts["x2"] = brez_points[1].x;
+		pts["y1"] = brez_points[0].y;
+		pts["y2"] = brez_points[1].y;
+		only_one = false;
+	}
+
 	//Если на холсте присутствуют 2 точки, то выполняется следующий блок:
     if (pts != null) {
 	    //х - х-координата точки
@@ -95,10 +102,10 @@ function drawBrez() {
 		//steps.html() - очистка таблицы, содержащей отладочную информацию
         steps.html("");
 		//Добавление в таблицу, содержащую отладочную информацию, заголовка вида i-e-x-y-e'-Point(x,y)
-        appendRow("th", 6, 'i', 'e', 'x', 'y', "e'", 'Point(x,y)');
+        if (only_one) appendRow("th", 6, 'i', 'e', 'x', 'y', "e'", 'Point(x,y)');
 		//Добавление в таблицу отладочной информации строки, содержащей текущие значения переменных
-        appendRow("td", 6, "", "", "", "", "start", "(" + pts.x1 + ";" + pts.y1 + ")");
-        appendRow("td", 6, 0, "", pts.x1, pts.y1, e, "(" + pts.x1 + ";" + pts.y1 + ")");
+        if (only_one) appendRow("td", 6, "", "", "", "", "start", "(" + pts.x1 + ";" + pts.y1 + ")");
+        if (only_one) appendRow("td", 6, 0, "", pts.x1, pts.y1, e, "(" + pts.x1 + ";" + pts.y1 + ")");
 		//Отрисовка начальной точки отрезка
         drawPoint(x, y);
 		//Цикл отрисовки отрезка
@@ -121,17 +128,16 @@ function drawBrez() {
 			//Пересчет значения ошибки
             e += 2 * dy;
 			//Добавление в таблицу отладочной информации строки, содержащей текущие значения переменных
-            appendRow("td", 6, i, oldE, x, y, e, "(" + x + ";" + y + ")");
+            if (only_one) appendRow("td", 6, i, oldE, x, y, e, "(" + x + ";" + y + ")");
 			//Отрисовка точки с полученными координатами
             drawPoint(x, y);
         }
 		//Добавление в таблицу отладочной информации строки, содержащей текущие значения переменных
-        appendRow("td", 6, "", "", "", "", "end", "(" + pts.x2 + ";" + pts.y2 + ")");
-        appendRow("th", 6, "", "", "", "dx", "dy", "");
-        appendRow("td", 6, "", "", "", dx.toFixed(2), dy.toFixed(2), "");
+        if (only_one) appendRow("td", 6, "", "", "", "", "end", "(" + pts.x2 + ";" + pts.y2 + ")");
+        if (only_one) appendRow("th", 6, "", "", "", "dx", "dy", "");
+        if (only_one) appendRow("td", 6, "", "", "", dx.toFixed(2), dy.toFixed(2), "");
     }
 }
-
 //Отрисовка отрезка сглаженного влгоритмом Ву
 function drawWu() {
 	/*

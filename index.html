@@ -15,6 +15,8 @@
     <script src="js/lines.js"></script>
     <script src="js/curves.js"></script>
     <script src="js/splines.js"></script>
+    <script src="js/transformation.js"></script>
+    <script src="js/conversion.js"></script>
 
     <link href="css/table.css" rel="stylesheet"/>
     <link href="css/button.css" rel="stylesheet"/>
@@ -65,7 +67,7 @@
 
             <h3>Lab 2</h3>
 
-            <div >
+            <div>
                 <label for="radius">radius:</label>
                 <input id="radius" value="10" style="width: 40px" type="text"/>
                 <button onclick="clearCanvas();drawCircle()" class="minibutton width_100">Circle</button>
@@ -88,7 +90,7 @@
 
             <h3>Lab 3</h3>
 
-            <div >
+            <div>
                 <label for="p1x">p1x:</label>
                 <input id="p1x" value="20" style="width: 40px" type="text"/>
                 <label for="p1y">p1y:</label>
@@ -123,15 +125,27 @@
 
             <h3>Lab 4</h3>
 
-            <div >
-                <button onclick="" class="minibutton width_100">Draw</button>
-                <button onclick="" class="minibutton width_100">Test</button>
+            <div>
+                <button onclick="drawFigure()" class="minibutton width_100">Draw</button>
                 <br/>
+                <button onclick="zoomCube(true)" class="minibutton width_100">+</button>
+                <button onclick="zoomCube(false)" class="minibutton width_100">-</button>
+                <br/>
+                <button onclick="rotateCube(ROTATE_X)" class="minibutton width_100">x</button>
+                <button onclick="rotateCube(ROTATE_Y)" class="minibutton width_100">y</button>
+                <button onclick="rotateCube(ROTATE_Z)" class="minibutton width_100">z</button>
+                <br/>
+                <button onclick="translateCube(10,0,0)" class="minibutton width_100">x</button>
+                <button onclick="translateCube(0,10,0)" class="minibutton width_100">y</button>
+                <button onclick="translateCube(0,0,10)" class="minibutton width_100">z</button>
+                <br/>
+                <button onclick="projectionCube(50)" class="minibutton width_100">test</button>
+
             </div>
 
             <h3>Canvas Settings</h3>
 
-            <div >
+            <div>
                 <label for="step">step:</label>
                 <input id="step" value="10" style="width: 40px" type="text"/>
                 <button onclick="changeStep()" class="minibutton width_100">Change step</button>
