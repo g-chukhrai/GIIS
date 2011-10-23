@@ -59,14 +59,8 @@ function drawCDA() {
 //Функция отрисовки отрезка алгоритмом Брезенхема
 function drawBrez(brez_points) {
 
-    var pts = [];
-    var only_one = true;
-    if (arguments.length != 1) {
-        pts = returnPoints(2);
-    } else {
-        pts = brez_points;
-        only_one = false;
-    }
+    var only_one = arguments.length != 1;
+    var pts = only_one ? returnPoints(2) : brez_points;
 
     //Если на холсте присутствуют 2 точки, то выполняется следующий блок:
     if (pts != null) {
@@ -142,12 +136,12 @@ function drawBrez(brez_points) {
     }
 }
 //Отрисовка отрезка сглаженного влгоритмом Ву
-function drawWu() {
+function drawWu(points) {
     /*
      pts - переменная, хранящая координаты двух точек
      returnPoints() - функция получения координат точек с холста
      */
-    var pts = returnPoints(2);
+    var pts = arguments.length == 1 ? points : returnPoints(2);
     //Если на холсте присутствуют 2 точки, то выполняется следующий блок:
     if (pts != null) {
         //x1, y1, x2, y2 - координаты двух точке

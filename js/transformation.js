@@ -22,6 +22,63 @@ var projMatrix = [
     [0,sp]
 ];
 
+var ROTATION = {
+    X: "X",
+    Y: "Y",
+    Z: "Z"
+};
+
+function scale(pointMatrix, zoomX, zoomY, zoomZ) {
+    if (arguments.length == 2) {
+        zoomY = arguments[1];
+        zoomZ = arguments[1];
+    }
+    var transform = [
+        [zoomX, 0, 0, 0],
+        [0, zoomY, 0, 0],
+        [0, 0, zoomZ, 0],
+        [0, 0, 0, 1]
+    ];
+    return multiplyMatrix(pointMatrix, transform);
+}
+
+function translate(pointMatrix, x, y, z) {
+    var transform = [
+        [1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [x, y, z, 1]
+    ];
+    return multiplyMatrix(pointMatrix, transform);
+}
+
+function rotate(pointMatrix, angle, direction) {
+    var transform;
+    if (direction == ROTATION.X) {
+        transform = [
+            [1, 0, 0, 0],
+            [0, Math.cos(angle), Math.sin(angle), 0],
+            [0, -Math.sin(angle), Math.cos(angle), 0],
+            [0, 0, 0, 1]
+        ];
+    } else if (direction == ROTATION.Y) {
+        transform = [
+            [Math.cos(angle), 0, -Math.sin(angle), 0],
+            [0, 1, 0, 0],
+            [Math.sin(angle), 0, Math.cos(angle), 0],
+            [0, 0, 0, 1]
+        ];
+    } else if (direction == ROTATION.Z) {
+        transform = [
+            [Math.cos(angle), Math.sin(angle), 0, 0],
+            [-Math.sin(angle), Math.cos(angle), 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1]
+        ];
+    }
+    return multiplyMatrix(pointMatrix, transform);
+}
+
 function getStartCubeCoords() {
     prevVertexes = null;
     vertexes = [
@@ -120,7 +177,6 @@ function projectionCube(d) {
             y /= w;
         }
         vertexes[i] = [Math.round(x), Math.round(y), d, 1];
-//        console.log(i + ": " + vertexes[i]);
     });
     drawFigure();
 }
