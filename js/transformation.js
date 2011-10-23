@@ -1,45 +1,38 @@
 var edges = [];
 var vertexes = [];
-var edges2d = [];
+var prevVertexes;
+var vertexes2d = [];
 
-var Percpective_x = 0;
-var Percpective_y = 0;
-var Percpective_z = 0;
-var Percpective_rho = 50000;
-var Percpective_theta = 30;
-//var	Percpective_theta=0.0;  
-var Percpective_phi = 30;
-//var	Percpective_phi=0.0;
-var Percpective_d = 25000;
-var Percpective_with_perspective = false;
-var Percpective_dx = 0;
-var Percpective_dy = 0;
+var DEFAULT_ZOOM_IN = 1.1;
+var DEFAULT_ZOOM_OUT = 0.9;
+var ANGLE_30 = Math.PI / 6;
 
-function nullVars() {
-    Percpective_x = 0;
-    Percpective_y = 0;
-    Percpective_z = 0;
-    Percpective_rho = 50000;
-    Percpective_theta = 30;
-    //Percpective_theta=0.0;
-    Percpective_phi = 30;
-    //Percpective_phi=0.0;
-    Percpective_d = 25000;
-    Percpective_with_perspective = false;
-    Percpective_dx = 0;
-    Percpective_dy = 0;
-}
+//Начальные углы наклона куба
+var startTheta = ANGLE_30;
+var startPhi = ANGLE_30;
+// Расчет коэффициентов матрицы преобразования
+var st = Math.sin(startTheta);
+var ct = Math.cos(startTheta);
+var sp = Math.sin(startPhi);
+var cp = Math.cos(startPhi);
+//Матрица преобразования
+var projMatrix = [
+    [-st, -cp * ct],
+    [ct,-cp * st],
+    [0,sp]
+];
 
-function getFileData() {
+function getStartCubeCoords() {
+    prevVertexes = null;
     vertexes = [
         [0, 0, 0, 1],
-        [50, 0, 0, 1],
-        [50, 50, 0, 1],
-        [0, 50, 0, 1],
-        [0, 0, 50, 1],
-        [50, 0, 50, 1],
-        [50, 50, 50, 1],
-        [0, 50, 50, 1]
+        [100, 0, 0, 1],
+        [100, 100, 0, 1],
+        [0, 100, 0, 1],
+        [0, 0, 100, 1],
+        [100, 0, 100, 1],
+        [100, 100, 100, 1],
+        [0, 100, 100, 1]
     ];
 
     edges = [
@@ -53,75 +46,39 @@ function getFileData() {
 }
 
 function drawFigure() {
-    edges2d = [];
-    canvasStep = 3;
+    vertexes2d = [];
+    canvasStep = 1;
     clearCanvas();
-    nullVars();
-    if (vertexes.length == 0) {
-        getFileData();
-    }
-    MakeProjection();
-
-    map = edges2d;
-    //drawAllPoints();
-    var cda_points = [];
-    var current_vertex1;
-    var current_vertex2;
+    makeProjection();
+    map = vertexes2d;
 
     for (var i = 0; i < edges.length; i++) {
         for (var j = 0; j < edges[i].length - 1; j++) {
-            cda_points = [];
-            current_vertex1 = edges[i][j];
-            current_vertex2 = edges[i][j + 1];
-            cda_points.push(edges2d[current_vertex1]);
-            cda_points.push(edges2d[current_vertex2]);
-            drawBrez(cda_points);
+            var v1 = vertexes2d[edges[i][j]];
+            var v2 = vertexes2d[edges[i][j + 1]];
+            drawBrez({x1:v1.x, y1:v1.y, x2:v2.x, y2:v2.y});
         }
     }
+    printVertexes();
 }
 
-
-function MakeProjection() {
-    // Перевод в радианы
-    Percpective_theta = Percpective_theta * Math.atan(1.0) / 45.0;
-    Percpective_phi = Percpective_phi * Math.atan(1.0) / 45.0;
-    // Расчет коэффициентов матрицы преобразования
-    var st = Math.sin(Percpective_theta), ct = Math.cos(Percpective_theta), sp = Math.sin(Percpective_phi), cp = Math.cos(Percpective_phi),
-            v11 = -st,    v12 = -cp * ct,    v13 = -sp * ct,
-            v21 = ct,        v22 = -cp * st,    v23 = -sp * st,
-            v32 = sp,        v33 = -cp,
-            v41 = Percpective_dx,    v42 = Percpective_dy,    v43 = Percpective_rho;
-    var x, y, z;
-    var x2d, y2d;
-    var TempZ = 0;
+function makeProjection() {
     //расчет видовых координат точек
     for (var i = 0; i < vertexes.length; i++) {
-        x = vertexes[i][0] - Percpective_x;
-        y = vertexes[i][1] - Percpective_y;
-        z = vertexes[i][2] - Percpective_z;
+        var x = vertexes[i][0];
+        var y = vertexes[i][1];
+        var z = vertexes[i][2];
 
-        TempZ = v13 * x + v23 * y + v33 * z + v43;
-        x2d = (v11 * x + v21 * y + v41 + 0.5);
-        y2d = (v12 * x + v22 * y + v32 * z + v42 + 0.5);
+        var x2d = projMatrix[0][0] * x + projMatrix[1][0] * y + 1;
+        var y2d = projMatrix[0][1] * x + projMatrix[1][1] * y + projMatrix[2][1] * z + 1;
 
-        // Перспективные преобразования
-        if (Percpective_with_perspective) {
-            x2d = (Percpective_d * x2d / TempZ + 0.5);
-            y2d = (Percpective_d * y2d / TempZ + 0.5);
-        }
-        x2d += (Percpective_x + 0.5);
-        y2d += (Percpective_y + 0.5);
-
-        edges2d.push({'x' : Math.round(x2d), 'y' : Math.round(y2d)});
+        vertexes2d.push({'x' : Math.round(x2d), 'y' : Math.round(y2d)});
     }
 }
 
 
-var DEFAULT_ZOOM_IN = 1.1;
-var DEFAULT_ZOOM_OUT = 0.9;
-var ROTATION_ANGLE = Math.PI / 6;
-
 function zoomCube(isZoomIn) {
+    savePrevVertexes();
     $.each(vertexes, function(i, val) {
         var point = new Array(val);
         var result = scale(point, isZoomIn ? DEFAULT_ZOOM_IN : DEFAULT_ZOOM_OUT);
@@ -131,30 +88,71 @@ function zoomCube(isZoomIn) {
 }
 
 function rotateCube(rotation) {
+    savePrevVertexes();
     $.each(vertexes, function(i, val) {
         var point = new Array(val);
-        var result = rotate(point, ROTATION_ANGLE, rotation);
+        var result = rotate(point, ANGLE_30, rotation);
         vertexes[i] = result[0];
     });
     drawFigure();
 }
 
 function translateCube(x, y, z) {
+    savePrevVertexes();
     $.each(vertexes, function(i, val) {
         var point = new Array(val);
         var result = translate(point, x, y, z);
+        console.log("point: " + point + " result: " + result);
         vertexes[i] = result[0];
     });
     drawFigure();
 }
 
 function projectionCube(d) {
+    savePrevVertexes();
     $.each(vertexes, function(i, val) {
-        var w = val[2]/d;
-        val[0]/=w;
-        val[1]/=w;
-        val[2]=d;
-        vertexes[i] = val;
+        var x = val[0];
+        var y = val[1];
+        var z = val[2];
+        if (z > 1) {
+            var w = z / d;
+            x /= w;
+            y /= w;
+        }
+        vertexes[i] = [Math.round(x), Math.round(y), d, 1];
+//        console.log(i + ": " + vertexes[i]);
     });
     drawFigure();
+}
+
+function savePrevVertexes() {
+    var rows = vertexes.length;
+    var columns = vertexes[0].length;
+    prevVertexes = createMatrix(rows, columns);
+    for (var i = 0; i < rows; i++) {
+        for (var j = 0; j < columns; j++) {
+            prevVertexes[i][j] = vertexes[i][j];
+        }
+    }
+}
+
+function printVertexes() {
+    var count = vertexes.length;
+    if (prevVertexes && prevVertexes.length == count) {
+        appendRow("th", 6, '', 'Prev', '', '', 'Curr', '');
+        appendRow("th", 6, 'x', 'y', 'z', 'x', 'y', 'z');
+        for (var i = 0; i < count; i++) {
+            var v = vertexes[i];
+            var pv = prevVertexes[i];
+            appendRow("td", 6, Math.round(pv[0]), Math.round(pv[1]), Math.round(pv[2]),
+                    Math.round(v[0]), Math.round(v[1]), Math.round(v[2]));
+        }
+    } else {
+        appendRow("th", 3, '', 'Curr', '');
+        appendRow("th", 3, 'x', 'y', 'z');
+        for (var i = 0; i < count; i++) {
+            var v = vertexes[i];
+            appendRow("td", 3, Math.round(v[0]), Math.round(v[1]), Math.round(v[2]));
+        }
+    }
 }

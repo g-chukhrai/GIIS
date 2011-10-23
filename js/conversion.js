@@ -22,7 +22,7 @@ function translate(pointMatrix, x, y, z) {
         [1, 0, 0, 0],
         [0, 1, 0, 0],
         [0, 0, 1, 0],
-        [x, y, z, 12]
+        [x, y, z, 1]
     ];
     return multiplyMatrix(pointMatrix, transform);
 }

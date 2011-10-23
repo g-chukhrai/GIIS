@@ -2,7 +2,15 @@
     width: 100px;
 }
 
-.minibutton, .minibutton.disabled:hover {
+.width_20 {
+    width: 20px;
+}
+
+.width_80 {
+    width: 80px;
+}
+
+.miniButton, .miniButton.disabled:hover {
     background: -moz-linear-gradient(center top, #F4F4F4, #ECECEC) repeat scroll 0 0 transparent;
     border: 1px solid #D4D4D4;
     border-radius: 3px;
@@ -16,57 +24,57 @@
     white-space: nowrap;
 }
 
-button.minibutton {
+button.miniButton {
     height: 23px;
 }
 
-.minibutton.lighter, .minibutton.disabled.lighter:hover {
+.miniButton.lighter, .miniButton.disabled.lighter:hover {
     background: -moz-linear-gradient(center top, #FAFAFA, #DDDDDD) repeat scroll 0 0 transparent;
     border: medium none;
     color: #333333;
     text-shadow: 1px 1px 0 #FFFFFF;
 }
 
-.minibutton.green, .minibutton.disabled.green:hover {
+.miniButton.green, .miniButton.disabled.green:hover {
     background: -moz-linear-gradient(center top, #36B825, #28881B) repeat scroll 0 0 transparent;
     border-color: #4A993E;
     color: #FFFFFF;
     text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
 }
 
-.minibutton.blue, .minibutton.disabled.blue:hover {
+.miniButton.blue, .miniButton.disabled.blue:hover {
     background: -moz-linear-gradient(center top, #448DA6, #32687B) repeat scroll 0 0 transparent;
     border-color: #275666;
     color: #FFFFFF;
     text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
 }
 
-input[type="text"] + .minibutton {
+input[type="text"] + .miniButton {
     margin-left: 5px;
 }
 
-button.minibutton::-moz-focus-inner {
+button.miniButton::-moz-focus-inner {
     margin: -1px -3px;
 }
 
-.minibutton.danger {
+.miniButton.danger {
     color: #990000;
 }
 
-.minibutton.disabled.danger:hover {
+.miniButton.disabled.danger:hover {
     background: -moz-linear-gradient(center top, #F4F4F4, #ECECEC) repeat scroll 0 0 transparent;
     border-color: #D4D4D4;
     color: #990000;
 }
 
-.minibutton > span {
+.miniButton > span {
     display: block;
     height: 21px;
     line-height: 21px;
     padding: 0 9px 0 7px;
 }
 
-.minibutton:hover {
+.miniButton:hover {
     background: -moz-linear-gradient(center top, #599BDC, #3072B3) repeat scroll 0 0 transparent;
     border-color: #518CC6 #518CC6 #2A65A0;
     color: #FFFFFF;
@@ -74,34 +82,34 @@ button.minibutton::-moz-focus-inner {
     text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
 }
 
-.minibutton.mousedown {
+.miniButton.mousedown {
     background: -moz-linear-gradient(center top, #3072B3, #599BDC) repeat scroll 0 0 transparent;
     border-color: #2A65A0 #2A65A0 #518CC6;
 }
 
-.minibutton.danger:hover {
+.miniButton.danger:hover {
     background: -moz-linear-gradient(center top, #DC5F59, #B33630) repeat scroll 0 0 transparent;
     border-color: #C65651 #C65651 #A0302A;
 }
 
-.minibutton.danger.mousedown {
+.miniButton.danger.mousedown {
     background: -moz-linear-gradient(center top, #B33630, #DC5F59) repeat scroll 0 0 transparent;
     border-color: #A0302A #A0302A #C65651;
 }
 
-.minibutton.disabled, .minibutton.disabled:hover {
+.miniButton.disabled, .miniButton.disabled:hover {
     cursor: default;
     opacity: 0.5;
 }
 
-.minibutton.selected {
+.miniButton.selected {
     background: -moz-linear-gradient(center top, #767676, #9E9E9E) repeat scroll 0 0 transparent;
     border-color: #686868;
     color: #FFFFFF;
     text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.5);
 }
 
-.minibutton img {
+.miniButton img {
     width: 20px;
     height: 20px;
     border: 0;

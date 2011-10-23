@@ -13,20 +13,28 @@ var speed = 100;
 
 var controlMap = []; //массив "контрольных точек"
 var movingPointNumber; //индекс перемещаемой контрольной точки в массиве controlMap
-var algorithmType;
 var posX;
 var posY;
 
 var MODE = {
     MAIN: "MAIN",
     MOVE_CANVAS : "MOVE_CANVAS",
-    SCALE_CANVAS : "SCALE_CANVAS",
     DRAW_POINT: "DRAW_POINT",
     DELETE_POINT : "DELETE_POINT",
-    MOVE_POINT: "MOVE_POINT"
+    MOVE_POINT: "MOVE_POINT",
+    CUBE: "CUBE"
+};
+
+var LAB_MODE={
+    MAIN: "MAIN",
+    HERMITE: "HERMITE",
+    BREZIER: "BREZIER",
+    BSPLINE: "BSPLINE",
+    CUBE: "CUBE"
 };
 
 var mode = MODE.MAIN;
+var labMode = LAB_MODE.MAIN;
 
 $(function() {
     canvas = document.getElementById("canvas");
@@ -45,12 +53,14 @@ $(function() {
     initEvents();
     initJQueryComponents();
     clearCanvas();
-
 });
 
-function setMode(mode, isRandom) {
-    algorithmType = mode;
-    drawAlgorithm(isRandom);
+function setMode(newMode){
+    mode = newMode;
+}
+
+function setLabMode(newMode){
+    labMode = newMode;
 }
 
 function initJQueryComponents() {
@@ -61,7 +71,25 @@ function initJQueryComponents() {
     $('#koef').spinner({ min: 1, max: 25 , step: 1 });
     $('#a').spinner({ min: 1, max: 50 , step: 1 });
     $('#b').spinner({ min: 1, max: 50 , step: 1 });
-//	$('#accordion').accordion();
+
+    $('#accordion').accordion();
+
+    $("#mover").draggable({
+    revert: true,
+    containment: "parent",
+    create: function() {
+        $(this).data("startLeft", parseInt($(this).css("left")));
+        $(this).data("startTop", parseInt($(this).css("top")));
+    },
+    drag: function(event, ui) {
+        var rel_left = ui.position.left - parseInt($(this).data("startLeft"));
+        var rel_top = ui.position.top - parseInt($(this).data("startTop"));
+        $('#coords').text(rel_left + ", " + rel_top);
+    },
+    stop: function() {
+        $('#coords').html("&nbsp;");
+    }
+});
 }
 
 
@@ -81,7 +109,7 @@ function initEvents() {
     canvasElem.mouseup(function() {
         if (mode == MODE.DRAW_POINT) {
             drawPoint(posX, posY);
-            if (algorithmType != null && movingPointNumber == null) {
+            if (labMode != LAB_MODE.MAIN && movingPointNumber == null) {
                 addToMap(posX, posY, true);
                 drawAllPoints();
             }
@@ -117,7 +145,7 @@ function initEvents() {
             var x = mouseLocalCord(e).x;
             var y = mouseLocalCord(e).y;
             info.html("x: " + x + " y: " + y);
-        } else if (mode = MODE.DRAW_POINT && algorithmType == 3) {
+        } else if (mode = MODE.DRAW_POINT && labMode == LAB_MODE.BSPLINE) {
             drawAlgorithm(false);
         }
 

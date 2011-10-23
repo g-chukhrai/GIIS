@@ -16,17 +16,30 @@ function drawField() {
     context.strokeStyle = "#000";
     context.strokeRect(-halfWidth, -halfHeight, width, height);
 
-    for (var x = -halfWidth; x < halfWidth; x += canvasStep) {
-        context.moveTo(x, -halfHeight);
-        context.lineTo(x, halfHeight);
-    }
+    if (labMode != LAB_MODE.CUBE && canvasStep > 3) {
+        for (var x = -halfWidth; x < halfWidth; x += canvasStep) {
+            context.moveTo(x, -halfHeight);
+            context.lineTo(x, halfHeight);
+        }
 
-    for (var y = -halfHeight; y < halfHeight; y += canvasStep) {
-        context.moveTo(halfWidth, y);
-        context.lineTo(-halfWidth, y);
+        for (var y = -halfHeight; y < halfHeight; y += canvasStep) {
+            context.moveTo(halfWidth, y);
+            context.lineTo(-halfWidth, y);
+        }
+        context.strokeStyle = "#eee";
+        context.stroke();
+        context.strokeStyle = "#000";
+    } else if (labMode == LAB_MODE.CUBE) {
+        //drawZ
+        context.strokeStyle = "#eee";
+        context.beginPath();
+        context.moveTo(-halfWidth/2, -halfHeight/2);
+        context.lineTo(halfWidth/2, halfHeight/2);
+        context.lineTo(halfWidth/2, halfHeight/2-10);
+        context.moveTo(halfWidth/2, halfHeight/2);
+        context.lineTo(halfWidth/2-10, halfHeight/2);
+        context.stroke();
     }
-    context.strokeStyle = "#eee";
-    context.stroke();
 
     //draw X
     var leftWall = halfWidth - canvasStep;
@@ -45,9 +58,11 @@ function drawField() {
     context.moveTo(0, -topWall);
     context.lineTo(0, topWall);
 
-    context.strokeStyle = "#000";
     context.stroke();
-    drawAllPoints();
+
+    if (labMode != LAB_MODE.CUBE) {
+        drawAllPoints();
+    }
 }
 
 function drawPoint(x, y) {
@@ -131,7 +146,6 @@ function draw2Points() {
     drawRandomPoint(-limit, limit);
     drawRandomPoint(-limit, limit);
 }
-
 function drawRandomPoint(from, to) {
     drawPoint(Math.rand(from, to), Math.rand(from, to));
 }
@@ -139,11 +153,11 @@ function drawRandomPoint(from, to) {
 //Функция отрисовки алгоритма (используется во время перемещения "контрольной точки")
 function drawAlgorithm(isRandom) {
     clearStandartMap();
-    if (algorithmType == 1) {
+    if (labMode == LAB_MODE.HERMITE) {
         drawHermite(isRandom);
-    } else if (algorithmType == 2) {
+    } else if (labMode == LAB_MODE.BREZIER) {
         drawBezier(isRandom);
-    } else if (algorithmType == 3) {
+    } else if (labMode == LAB_MODE.BSPLINE) {
         drawBSpline(isRandom);
     }
 }

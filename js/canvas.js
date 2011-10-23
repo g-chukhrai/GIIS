@@ -50,14 +50,14 @@ function setCtxCenter() {
 
 function clearCanvas() {
     map = [];
-	controlMap = [];
+    controlMap = [];
     resetScale();
     steps.html("");
 }
 
 function clearStandartMap() {
-	map = [];
-	resetScale();
+    map = [];
+    resetScale();
 }
 
 function clearContext() {
@@ -69,10 +69,14 @@ function clearContext() {
 }
 
 function upScale() {
-    clearContext();
-    scaleFactor += 0.1;
-    context.scale(1.1, 1.1);
-    drawField();
+    if (labMode == LAB_MODE.MAIN) {
+        clearContext();
+        scaleFactor += 0.1;
+        context.scale(1.1, 1.1);
+        drawField();
+    } else if (labMode == LAB_MODE.CUBE) {
+        zoomCube(true);
+    }
 }
 
 function resetScale() {
@@ -83,8 +87,12 @@ function resetScale() {
 }
 
 function downScale() {
-    clearContext();
-    context.scale(0.9, 0.9);
-    scaleFactor -= 0.1;
-    drawField();
+    if (labMode == LAB_MODE.MAIN) {
+        clearContext();
+        context.scale(0.9, 0.9);
+        scaleFactor -= 0.1;
+        drawField();
+    } else if (labMode == LAB_MODE.CUBE) {
+        zoomCube(false);
+    }
 }
