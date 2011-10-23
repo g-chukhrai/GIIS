@@ -1,0 +1,32 @@
+#steps {
+    border: 1px solid #6699CC;
+    border-collapse: collapse;
+    font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+    font-size: 10px;
+    margin-left: 30px;
+    margin-top: 30px;
+    text-align: left;
+}
+
+#steps th {
+    color: #003399;
+    font-size: 14px;
+    font-weight: normal;
+    padding: 5px;
+    background-color: #f5f5f5;
+}
+
+#steps tbody {
+    background: none repeat scroll 0 0 #E8EDFF;
+}
+
+#steps td {
+    border-top: 1px dashed #FFFFFF;
+    color: #666699;
+    padding: 5px;
+}
+
+#steps tbody tr:hover td {
+    background: none repeat scroll 0 0 #D0DAFD;
+    color: #333399;
+}

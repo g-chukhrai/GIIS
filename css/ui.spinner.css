@@ -1,0 +1,12 @@
+.ui-spinner {
+    position: relative;
+    border: 0 solid white;
+}
+
+.ui-spinner-buttons {
+    position: absolute
+}
+
+.ui-spinner-button {
+    overflow: hidden
+}
