@@ -9,15 +9,15 @@ var ANGLE_30 = Math.PI / 6;
 var CUBE_SIZE = 100;
 var CUBE_CANVAS_STEP = 1;
 
-//Начальные углы наклона куба
+//РќР°С‡Р°Р»СЊРЅС‹Рµ СѓРіР»С‹ РЅР°РєР»РѕРЅР° РєСѓР±Р°
 var startTheta = ANGLE_30;
 var startPhi = ANGLE_30;
-// Расчет коэффициентов матрицы преобразования
+// Р Р°СЃС‡РµС‚ РєРѕСЌС„С„РёС†РёРµРЅС‚РѕРІ РјР°С‚СЂРёС†С‹ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ
 var st = Math.sin(startTheta);
 var ct = Math.cos(startTheta);
 var sp = Math.sin(startPhi);
 var cp = Math.cos(startPhi);
-//Матрица преобразования
+//РњР°С‚СЂРёС†Р° РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ
 var projMatrix = [
     [-st, -cp * ct],
     [ct,-cp * st],
@@ -132,7 +132,7 @@ function drawFigure() {
 }
 
 function makeProjection() {
-    //расчет видовых координат точек
+    //СЂР°СЃС‡РµС‚ РІРёРґРѕРІС‹С… РєРѕРѕСЂРґРёРЅР°С‚ С‚РѕС‡РµРє
     for (var i = 0; i < vertexes.length; i++) {
         var x = vertexes[i][0];
         var y = vertexes[i][1];
