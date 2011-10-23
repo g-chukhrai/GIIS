@@ -1,11 +1,13 @@
-var edges = [];
-var vertexes = [];
+var edges;
+var vertexes;
+var vertexes2d;
 var prevVertexes;
-var vertexes2d = [];
 
 var DEFAULT_ZOOM_IN = 1.1;
 var DEFAULT_ZOOM_OUT = 0.9;
 var ANGLE_30 = Math.PI / 6;
+var CUBE_SIZE = 100;
+var CUBE_CANVAS_STEP = 1;
 
 //Начальные углы наклона куба
 var startTheta = ANGLE_30;
@@ -83,13 +85,13 @@ function getStartCubeCoords() {
     prevVertexes = null;
     vertexes = [
         [0, 0, 0, 1],
-        [100, 0, 0, 1],
-        [100, 100, 0, 1],
-        [0, 100, 0, 1],
-        [0, 0, 100, 1],
-        [100, 0, 100, 1],
-        [100, 100, 100, 1],
-        [0, 100, 100, 1]
+        [CUBE_SIZE, 0, 0, 1],
+        [CUBE_SIZE, CUBE_SIZE, 0, 1],
+        [0, CUBE_SIZE, 0, 1],
+        [0, 0, CUBE_SIZE, 1],
+        [CUBE_SIZE, 0, CUBE_SIZE, 1],
+        [CUBE_SIZE, CUBE_SIZE, CUBE_SIZE, 1],
+        [0, CUBE_SIZE, CUBE_SIZE, 1]
     ];
 
     edges = [
@@ -104,7 +106,7 @@ function getStartCubeCoords() {
 
 function drawFigure() {
     vertexes2d = [];
-    canvasStep = 1;
+    canvasStep = CUBE_CANVAS_STEP;
     clearCanvas();
     makeProjection();
     map = vertexes2d;
@@ -206,9 +208,9 @@ function printVertexes() {
     } else {
         appendRow("th", 3, '', 'Curr', '');
         appendRow("th", 3, 'x', 'y', 'z');
-        for (var i = 0; i < count; i++) {
-            var v = vertexes[i];
-            appendRow("td", 3, Math.round(v[0]), Math.round(v[1]), Math.round(v[2]));
+        for (var j = 0; j < count; j++) {
+            var vertex = vertexes[j];
+            appendRow("td", 3, Math.round(vertex[0]), Math.round(vertex[1]), Math.round(vertex[2]));
         }
     }
 }
