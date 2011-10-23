@@ -54,6 +54,16 @@ function translate(pointMatrix, x, y, z) {
     return multiplyMatrix(pointMatrix, transform);
 }
 
+function projection(pointMatrix, d) {
+    var transform = [
+        [1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 0, 1 / d],
+        [0, 0, 0, 0]
+    ];
+    return multiplyMatrix(pointMatrix, transform);
+}
+
 function rotate(pointMatrix, angle, direction) {
     var transform;
     if (direction == ROTATION.X) {
@@ -161,7 +171,6 @@ function translateCube(x, y, z) {
     $.each(vertexes, function(i, val) {
         var point = new Array(val);
         var result = translate(point, x, y, z);
-        console.log("point: " + point + " result: " + result);
         vertexes[i] = result[0];
     });
     drawFigure();
@@ -170,15 +179,9 @@ function translateCube(x, y, z) {
 function projectionCube(d) {
     savePrevVertexes();
     $.each(vertexes, function(i, val) {
-        var x = val[0];
-        var y = val[1];
-        var z = val[2];
-        if (z > 1) {
-            var w = z / d;
-            x /= w;
-            y /= w;
-        }
-        vertexes[i] = [Math.round(x), Math.round(y), d, 1];
+        var point = new Array(val);
+        var result = projection(point, d);
+        vertexes[i] = result[0];
     });
     drawFigure();
 }
