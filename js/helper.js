@@ -39,7 +39,7 @@ function rfpart(x) {
     return 1 - fpart(x);
 }
 
-//Р¤СѓРЅРєС†РёСЏ РїСЂРѕРІРµСЂРєРё СЃСѓС‰РµСЃС‚РІРѕРІР°РЅРёСЏ "РєРѕРЅС‚СЂРѕР»СЊРЅРѕР№ С‚РѕС‡РєРё" РІ РєРѕРѕСЂРґРёРЅР°С‚Р°С… С…,Сѓ
+//Функция проверки существования "контрольной точки" в координатах х,у
 function controlPointExists(x, y) {
     var index = null;
     $.each(controlMap, function(i,val) {
@@ -51,7 +51,7 @@ function controlPointExists(x, y) {
     return index;
 }
 
-//Р¤СѓРЅРєС†РёСЏ РёР·РјРµРЅРµРЅРёСЏ РїРѕР»РѕР¶РµРЅРёСЏ С‚РѕС‡РєРё СЃ РїРѕСЂСЏРґРєРѕРІС‹Рј РЅРѕРјРµСЂРѕРј number РІ РјР°СЃСЃРёРІРµ controlMap
+//Функция изменения положения точки с порядковым номером number в массиве controlMap
 function changePointPosition(x, y, number) {
     controlMap[number] = {'x' : x, 'y' : y, 'z' : 1};
 }
