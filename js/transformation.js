@@ -1,4 +1,4 @@
-var edges;
+var planes;
 var vertexes;
 var vertexes2d;
 var prevVertexes;
@@ -104,7 +104,7 @@ function getStartCubeCoords() {
         [0, CUBE_SIZE, CUBE_SIZE, 1]
     ];
 
-    edges = [
+    planes = [
         [0, 1, 2, 3],
         [4, 5, 6, 7],
         [1, 2, 6, 5],
@@ -121,11 +121,15 @@ function drawFigure() {
     makeProjection();
     map = vertexes2d;
 
-    for (var i = 0; i < edges.length; i++) {
-        for (var j = 0; j < edges[i].length - 1; j++) {
-            var v1 = vertexes2d[edges[i][j]];
-            var v2 = vertexes2d[edges[i][j + 1]];
-            drawBrez({x1:v1.x, y1:v1.y, x2:v2.x, y2:v2.y});
+    for (var i = 0; i < planes.length; i++) {
+        var plane = planes[i];
+        if (isPlaneVisible(plane)) {
+            var length = plane.length;
+            for (var j = 0; j < length ; j++) {
+                var v1 = vertexes2d[plane[j]];
+                var v2 = vertexes2d[plane[j == length - 1 ? 0 : j + 1]];
+                drawBrez({x1:v1.x, y1:v1.y, x2:v2.x, y2:v2.y});
+            }
         }
     }
     printVertexes();
