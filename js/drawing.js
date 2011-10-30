@@ -80,6 +80,7 @@ function drawPoint(x, y) {
     $.each(map, function(i, val) {
         if (val.x == x && val.y == y) {
             removeId = i;
+			if (pixelMatrix != null) pixelMatrix[x+HALF_PIXEL_COUNT][y+HALF_PIXEL_COUNT] = 0;
             return false;
         }
     });
