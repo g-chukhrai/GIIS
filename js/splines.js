@@ -6,7 +6,7 @@ var showInfoTable = true; //Переменная, указывающая тре�
 	@param isRandom - параметр, указывающий - отрисовка будет производиться по заданному или случайному набору точек
 */
 function drawHermite(isRandom) {
-	var showInfoTable=$('input[name="showInfo"]').prop('checked');
+    var showInfoTable=showInfoCheckBox.prop('checked');
     if (isRandom) getRandomPoints(); // Отрисовка на холсте четырех точек со случайными координатами
     getPoints(); //Получение координат четырех точек с холста
 	
@@ -50,7 +50,7 @@ function drawHermite(isRandom) {
 	@param isRandom - параметр, указывающий - отрисовка будет производиться по заданному или случайному набору точек
 */
 function drawBezier(isRandom) {
-	var showInfoTable=$('input[name="showInfo"]').prop('checked');
+	var showInfoTable=showInfoCheckBox.prop('checked');
     if (isRandom) getRandomPoints(); // Отрисовка на холсте четырех точек со случайными координатами
     getPoints(); //Получение координат четырех точек с холста
 	
@@ -95,7 +95,7 @@ function drawBezier(isRandom) {
 	@param isRandom - параметр, указывающий - отрисовка будет производиться по заданному или случайному набору точек
 */
 function drawBSpline(isRandom) {
-	var showInfoTable=$('input[name="showInfo"]').prop('checked');
+	var showInfoTable=showInfoCheckBox.prop('checked');
     step = canvasStep/(halfWidth*4); // Установка шага изменения t
 	//Матрица М
     var M = [

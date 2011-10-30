@@ -109,7 +109,9 @@
             <h3>Lab 3</h3>
 
             <div>
-                <input type="checkbox" name="showInfo">Show iteration table<br>
+                <label>
+                    Show iteration table: <input type="checkbox" name="showInfo"/>
+                </label><br/>
                 <button onclick="setLabMode(LAB_MODE.HERMITE);drawAlgorithm(false);" class="miniButton width_100">
                     Hermite
                 </button>
@@ -137,19 +139,21 @@
             <h3>Lab 4</h3>
 
             <div>
-                <button onclick="setLabMode(LAB_MODE.CUBE);getStartCubeCoords();drawFigure();"
-                        class="miniButton width_100">Draw cube
-                </button>
+                <button onclick="drawStartCube();" class="miniButton width_100">Draw cube</button>
+                <br/>
+                <label>
+                    Hide invisible planes: <input type="checkbox" name="hidePlanes">
+                </label>
                 <br/>Rotation:<br/>
                 <button onclick="rotateCube(ROTATION.X)" class="miniButton width_20">x</button>
                 <button onclick="rotateCube(ROTATION.Y)" class="miniButton width_20">y</button>
                 <button onclick="rotateCube(ROTATION.Z)" class="miniButton width_20">z</button>
                 <br/>Translation:<br/>
-                <button onclick="translateCube(10,0,0)" class="miniButton width_20">x</button>
-                <button onclick="translateCube(0,10,0)" class="miniButton width_20">y</button>
-                <button onclick="translateCube(0,0,10)" class="miniButton width_20">z</button>
+                <button onclick="translateCube(MOVE_STEP,0,0)" class="miniButton width_20">x</button>
+                <button onclick="translateCube(0,MOVE_STEP,0)" class="miniButton width_20">y</button>
+                <button onclick="translateCube(0,0,MOVE_STEP)" class="miniButton width_20">z</button>
                 <br/>
-                <button onclick="projectionCube(100)" class="miniButton width_100">Z-projection</button>
+                <button onclick="projectionCube(CS*2)" class="miniButton width_100">Z-projection</button>
 
                 <!--<div id="joystick">-->
                 <!--<div id="mover"></div>-->

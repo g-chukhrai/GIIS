@@ -15,6 +15,8 @@ var controlMap = []; //массив "контрольных точек"
 var movingPointNumber; //индекс перемещаемой контрольной точки в массиве controlMap
 var posX;
 var posY;
+var showInfoCheckBox;
+var hidePlanesCheckBox;
 
 
 var MODE = {
@@ -28,7 +30,7 @@ var MODE = {
 	
 };
 
-var LAB_MODE={
+var LAB_MODE = {
     MAIN: "MAIN",
     HERMITE: "HERMITE",
     BREZIER: "BREZIER",
@@ -59,11 +61,11 @@ $(function() {
     clearCanvas();
 });
 
-function setMode(newMode){
+function setMode(newMode) {
     mode = newMode;
 }
 
-function setLabMode(newMode){
+function setLabMode(newMode) {
     labMode = newMode;
 }
 
@@ -75,25 +77,27 @@ function initJQueryComponents() {
     $('#koef').spinner({ min: 1, max: 25 , step: 1 });
     $('#a').spinner({ min: 1, max: 50 , step: 1 });
     $('#b').spinner({ min: 1, max: 50 , step: 1 });
+    showInfoCheckBox = $('input[name="showInfo"]');
+    hidePlanesCheckBox = $('input[name="hidePlanes"]');
 
     $('#accordion').accordion();
 
     $("#mover").draggable({
-    revert: true,
-    containment: "parent",
-    create: function() {
-        $(this).data("startLeft", parseInt($(this).css("left")));
-        $(this).data("startTop", parseInt($(this).css("top")));
-    },
-    drag: function(event, ui) {
-        var rel_left = ui.position.left - parseInt($(this).data("startLeft"));
-        var rel_top = ui.position.top - parseInt($(this).data("startTop"));
-        $('#coords').text(rel_left + ", " + rel_top);
-    },
-    stop: function() {
-        $('#coords').html("&nbsp;");
-    }
-});
+        revert: true,
+        containment: "parent",
+        create: function() {
+            $(this).data("startLeft", parseInt($(this).css("left")));
+            $(this).data("startTop", parseInt($(this).css("top")));
+        },
+        drag: function(event, ui) {
+            var rel_left = ui.position.left - parseInt($(this).data("startLeft"));
+            var rel_top = ui.position.top - parseInt($(this).data("startTop"));
+            $('#coords').text(rel_left + ", " + rel_top);
+        },
+        stop: function() {
+            $('#coords').html("&nbsp;");
+        }
+    });
 }
 
 
