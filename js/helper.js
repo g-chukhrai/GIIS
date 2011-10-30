@@ -1,4 +1,4 @@
-function addToMap(x, y, isState) {
+﻿function addToMap(x, y, isState) {
     if (arguments.length == 3) {
         controlMap.push({'x' : x, 'y' : y, 'z' : 1});
     } else {

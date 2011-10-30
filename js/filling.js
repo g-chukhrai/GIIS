@@ -1,107 +1,168 @@
-var borders = []; //границы фигуры
-var seedPixel; //затравочный пиксель
+var borders = []; //РіСЂР°РЅРёС†С‹ С„РёРіСѓСЂС‹
+var seedPixel; //Р·Р°С‚СЂР°РІРѕС‡РЅС‹Р№ РїРёРєСЃРµР»СЊ
 
-//Функция отрисовки фигуры по точкам на холсте
+//Р¤СѓРЅРєС†РёСЏ РѕС‚СЂРёСЃРѕРІРєРё С„РёРіСѓСЂС‹ РїРѕ С‚РѕС‡РєР°Рј РЅР° С…РѕР»СЃС‚Рµ
 function paintArea() {
-	borders = [];
-	for (var i = 0; i < controlMap.length-1 ; i++) {
-		var array = [];
-		array[0] = controlMap[i];
-		array[1] = controlMap[i+1];
-        drawBrez({x1:controlMap[i].x, y1:controlMap[i].y, x2:controlMap[i+1].x, y2:controlMap[i+1].y});
+    borders = [];
+    for (var i = 0; i < controlMap.length-1 ; i++) {
+        var array = [];
+        array[0] = controlMap[i];
+        array[1] = controlMap[i+1];
+        drawBrez({
+            x1:controlMap[i].x, 
+            y1:controlMap[i].y, 
+            x2:controlMap[i+1].x, 
+            y2:controlMap[i+1].y
+            });
     }	
-	drawBrez({x1:controlMap[controlMap.length-1].x, y1:controlMap[controlMap.length-1].y, x2:controlMap[0].x, y2:controlMap[0].y});
-	drawAllPoints();
-	map = borders;
+    drawBrez({
+        x1:controlMap[controlMap.length-1].x, 
+        y1:controlMap[controlMap.length-1].y, 
+        x2:controlMap[0].x, 
+        y2:controlMap[0].y
+        });
+    drawAllPoints();
+    map = borders;
 }
 
 
-//Функция, реализующая алгоритм заполнения с затравкой
+//Р¤СѓРЅРєС†РёСЏ, СЂРµР°Р»РёР·СѓСЋС‰Р°СЏ Р°Р»РіРѕСЂРёС‚Рј Р·Р°РїРѕР»РЅРµРЅРёСЏ СЃ Р·Р°С‚СЂР°РІРєРѕР№
 function simpleFilling() {
-	var stack = new Array();
-	stack.push(seedPixel);
-	while (stack.length != 0) {
-		var point = stack.pop();
-		var x = point.x;
-		var y = point.y;
-		if (pointExists(x, y) == null) {
-			drawPoint(x, y);
-		} 
-		x++;
-		if (pointExists(x, y) == null) stack.push({"x": x, "y":y, "z":1});
-		x--; y++;
-		if (pointExists(x, y) == null) stack.push({"x": x, "y":y, "z":1})
-		y--; x--;
-		if (pointExists(x, y) == null) stack.push({"x": x, "y":y, "z":1})
-		y--; x++;
-		if (pointExists(x, y) == null) stack.push({"x": x, "y":y, "z":1})
-	}
+    var stack = new Array();
+    stack.push(seedPixel);
+    while (stack.length != 0) {
+        var point = stack.pop();
+        var x = point.x;
+        var y = point.y;
+        if (pointExists(x, y) == null) {
+            drawPoint(x, y);
+        } 
+        x++;
+        if (pointExists(x, y) == null) stack.push({
+            "x": x, 
+            "y":y, 
+            "z":1
+        });
+        x--;
+        y++;
+        if (pointExists(x, y) == null) stack.push({
+            "x": x, 
+            "y":y, 
+            "z":1
+        })
+        y--;
+        x--;
+        if (pointExists(x, y) == null) stack.push({
+            "x": x, 
+            "y":y, 
+            "z":1
+        })
+        y--;
+        x++;
+        if (pointExists(x, y) == null) stack.push({
+            "x": x, 
+            "y":y, 
+            "z":1
+        })
+    }
 }
 
-// Функция, реализующая построчный алгоритм заполнения с затравкой
+// Р¤СѓРЅРєС†РёСЏ, СЂРµР°Р»РёР·СѓСЋС‰Р°СЏ РїРѕСЃС‚СЂРѕС‡РЅС‹Р№ Р°Р»РіРѕСЂРёС‚Рј Р·Р°РїРѕР»РЅРµРЅРёСЏ СЃ Р·Р°С‚СЂР°РІРєРѕР№
 function stringFilling() {
-	var stack = new Array();
-	stack.push(seedPixel);
-	drawPoint(seedPixel.x, seedPixel.y);
-	var minX = getXLeft() - 1;
-	var maxX = getXRight() + 1;
-	while (stack.length != 0) {
-		var point = stack.pop();
-		var x = point.x;
-		var y = point.y;
-		if (pointExists(x, y) == null) {
-			drawPoint(x, y);
-		} else {
-			continue;
-		}
-		var i = x;
-		while (i > minX) {
-			i--;
-			if (pointExists(i, y) != null) {
-				stack.push({"x": i+1, "y":y-1, "z":1})
-				stack.push({"x": i+1, "y":y+1, "z":1})
-				break;
-			}
-			if (pointExists(i, y+1) == null) stack.push({"x": i, "y":y+1, "z":1})
-			if (pointExists(i, y-1) == null) stack.push({"x": i, "y":y-1, "z":1})
-			drawPoint(i, y);
-		}
-		i = x;
-		while (i < maxX) {
-			i++;
-			if (pointExists(i, y) != null) {
+    var stack = new Array();
+    stack.push(seedPixel);
+    drawPoint(seedPixel.x, seedPixel.y);
+    var minX = getXLeft() - 1;
+    var maxX = getXRight() + 1;
+    while (stack.length != 0) {
+        var point = stack.pop();
+        var x = point.x;
+        var y = point.y;
+        if (pointExists(x, y) == null) {
+            drawPoint(x, y);
+        } else {
+            continue;
+        }
+        var i = x;
+        while (i > minX) {
+            i--;
+            if (pointExists(i, y) != null) {
+                stack.push({
+                    "x": i+1, 
+                    "y":y-1, 
+                    "z":1
+                })
+                stack.push({
+                    "x": i+1, 
+                    "y":y+1, 
+                    "z":1
+                })
+                break;
+            }
+            if (pointExists(i, y+1) == null) stack.push({
+                "x": i, 
+                "y":y+1, 
+                "z":1
+            })
+            if (pointExists(i, y-1) == null) stack.push({
+                "x": i, 
+                "y":y-1, 
+                "z":1
+            })
+            drawPoint(i, y);
+        }
+        i = x;
+        while (i < maxX) {
+            i++;
+            if (pointExists(i, y) != null) {
 				
-				stack.push({"x": i-1, "y":y-1, "z":1})	
-				stack.push({"x": i-1, "y":y+1, "z":1})		
-				break;
-			}
-			if (pointExists(i, y+1) == null) stack.push({"x": i, "y":y+1, "z":1})
-			if (pointExists(i, y-1) == null) stack.push({"x": i, "y":y-1, "z":1})
-			drawPoint(i, y);
-		}
-	}	
+                stack.push({
+                    "x": i-1, 
+                    "y":y-1, 
+                    "z":1
+                })	
+                stack.push({
+                    "x": i-1, 
+                    "y":y+1, 
+                    "z":1
+                })		
+                break;
+            }
+            if (pointExists(i, y+1) == null) stack.push({
+                "x": i, 
+                "y":y+1, 
+                "z":1
+            })
+            if (pointExists(i, y-1) == null) stack.push({
+                "x": i, 
+                "y":y-1, 
+                "z":1
+            })
+            drawPoint(i, y);
+        }
+    }	
 }
 
-//Функция, выполняющая поиск точки на границе фигуры с минимальными значением координаты Х
+//Р¤СѓРЅРєС†РёСЏ, РІС‹РїРѕР»РЅСЏСЋС‰Р°СЏ РїРѕРёСЃРє С‚РѕС‡РєРё РЅР° РіСЂР°РЅРёС†Рµ С„РёРіСѓСЂС‹ СЃ РјРёРЅРёРјР°Р»СЊРЅС‹РјРё Р·РЅР°С‡РµРЅРёРµРј РєРѕРѕСЂРґРёРЅР°С‚С‹ РҐ
 function getXLeft() {
-	var minX = 9999;
-	for (var i = 0; i < borders.length; i++) {
-		var x = borders[i].x;
-		if (x < minX) {
-			minX = x;
-		}
-	}
-	return minX;
+    var minX = 9999;
+    for (var i = 0; i < borders.length; i++) {
+        var x = borders[i].x;
+        if (x < minX) {
+            minX = x;
+        }
+    }
+    return minX;
 }
 
-//Функция, выполняющая поиск точки на границе фигуры с максимальным значением координаты Х
+//Р¤СѓРЅРєС†РёСЏ, РІС‹РїРѕР»РЅСЏСЋС‰Р°СЏ РїРѕРёСЃРє С‚РѕС‡РєРё РЅР° РіСЂР°РЅРёС†Рµ С„РёРіСѓСЂС‹ СЃ РјР°РєСЃРёРјР°Р»СЊРЅС‹Рј Р·РЅР°С‡РµРЅРёРµРј РєРѕРѕСЂРґРёРЅР°С‚С‹ РҐ
 function getXRight() {
-	var maxX = -9999;
-	for (var i = 0; i < borders.length; i++) {
-		var x = borders[i].x;
-		if (x > maxX) {
-			maxX = x;
-		}
-	}
-	return maxX;
+    var maxX = -9999;
+    for (var i = 0; i < borders.length; i++) {
+        var x = borders[i].x;
+        if (x > maxX) {
+            maxX = x;
+        }
+    }
+    return maxX;
 }
