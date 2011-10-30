@@ -16,13 +16,16 @@ var movingPointNumber; //индекс перемещаемой контроль�
 var posX;
 var posY;
 
+
 var MODE = {
     MAIN: "MAIN",
     MOVE_CANVAS : "MOVE_CANVAS",
     DRAW_POINT: "DRAW_POINT",
     DELETE_POINT : "DELETE_POINT",
     MOVE_POINT: "MOVE_POINT",
-    CUBE: "CUBE"
+    CUBE: "CUBE",
+	ADD_SEED_PIXEL: "ADD_SEED_PIXEL"
+	
 };
 
 var LAB_MODE={
@@ -30,7 +33,8 @@ var LAB_MODE={
     HERMITE: "HERMITE",
     BREZIER: "BREZIER",
     BSPLINE: "BSPLINE",
-    CUBE: "CUBE"
+    CUBE: "CUBE",
+	FILL_AREA: "FILL_AREA"
 };
 
 var mode = MODE.MAIN;
@@ -95,14 +99,16 @@ function initJQueryComponents() {
 
 function initEvents() {
     canvasElem.mousedown(function(e) {
-        mode = MODE.DRAW_POINT;
-        posX = mouseLocalCord(e).x;
-        posY = mouseLocalCord(e).y;
-        if (tid == 0) {
-            tid = setInterval(function() {
-                mode = MODE.MOVE_POINT;
-            }, speed);
-        }
+		posX = mouseLocalCord(e).x;
+		posY = mouseLocalCord(e).y;
+		if (mode != MODE.ADD_SEED_PIXEL) {
+			mode = MODE.DRAW_POINT;
+			if (tid == 0) {
+				tid = setInterval(function() {
+				mode = MODE.MOVE_POINT;
+			}, speed);
+			}
+	    }
 
     });
 
@@ -116,7 +122,11 @@ function initEvents() {
         } else if (mode == MODE.MOVE_POINT) {
             mode = MODE.MAIN;
             movingPointNumber = null;
-        }
+        } else if (mode == MODE.ADD_SEED_PIXEL) {
+			seedPixel = {"x": posX, "y": posY, "z":1};
+			drawPoint(posX, posY);
+			mode = MODE.MAIN;
+		}
         toggleOff();
     });
 
@@ -140,12 +150,15 @@ function initEvents() {
             if (movingPointNumber != null) {
                 changePointPosition(mouseLocalCord(e).x, mouseLocalCord(e).y, movingPointNumber);
                 drawAlgorithm(false);
+				if (labMode = LAB_MODE.FILL_AREA) {
+					paintArea();
+				}
             }
-        } else if (mode = MODE.MAIN) {
+        } else if (mode == MODE.MAIN) {
             var x = mouseLocalCord(e).x;
             var y = mouseLocalCord(e).y;
             info.html("x: " + x + " y: " + y);
-        } else if (mode = MODE.DRAW_POINT && labMode == LAB_MODE.BSPLINE) {
+        } else if (mode == MODE.DRAW_POINT && labMode == LAB_MODE.BSPLINE) {
             drawAlgorithm(false);
         }
 

@@ -16,6 +16,7 @@
     <script src="js/splines.js"></script>
     <script src="js/transformation.js"></script>
     <script src="js/hide.js"></script>
+	<script src="js/filling.js"></script>
 
     <link href="css/table.css" rel="stylesheet"/>
     <link href="css/button.css" rel="stylesheet"/>
@@ -154,6 +155,19 @@
                 <!--<div id="mover"></div>-->
                 <!--</div>-->
                 <!--<div id="coords">&nbsp;</div>-->
+            </div>
+			
+			<h3>Lab 5 (Filling)</h3>
+
+            <div>
+                <button onclick="setLabMode(LAB_MODE.FILL_AREA);" class="miniButton width_100">Enable Fill Mode </button>
+				<button onclick="paintArea();" class="miniButton width_100">Paint Area </button>
+				<br>
+				<button onclick="setMode(MODE.ADD_SEED_PIXEL);" class="miniButton width_100">Add seed pixel </button>
+				<br>
+				<button onclick="simpleFilling();" class="miniButton width_100">Simple Filling</button>
+				<button onclick="stringFilling();" class="miniButton width_100">String Filling</button>
+
             </div>
 
             <h3>Canvas Settings</h3>

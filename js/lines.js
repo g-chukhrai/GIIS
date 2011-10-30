@@ -133,6 +133,9 @@ function drawBrez(brez_points) {
             appendRow("th", 6, "", "", "", "dx", "dy", "");
             appendRow("td", 6, "", "", "", dx.toFixed(2), dy.toFixed(2), "");
         }
+		if (labMode = LAB_MODE.FILL_AREA) {
+			borders = union_maps(borders, map);
+		}
     }
 }
 //Отрисовка отрезка сглаженного влгоритмом Ву

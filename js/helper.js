@@ -51,6 +51,19 @@ function controlPointExists(x, y) {
     return index;
 }
 
+//Функция проверки существования точки в координатах х,у
+function pointExists(x, y) {
+    var index = null;
+    $.each(map, function(i,val) {
+        if (val.x == x && val.y == y) {
+            index = i;
+            return false;
+        }
+    });
+    return index;
+}
+
+
 //Функция изменения положения точки с порядковым номером number в массиве controlMap
 function changePointPosition(x, y, number) {
     controlMap[number] = {'x' : x, 'y' : y, 'z' : 1};
@@ -99,4 +112,41 @@ function getRandomPoints(count) {
     }
     drawAllPoints();
 }
+
+  function union_arrays (x, y) {
+  var obj = {};
+  for (var i = x.length-1; i >= 0; -- i)
+     obj[x[i]] = x[i];
+  for (var i = y.length-1; i >= 0; -- i)
+     obj[y[i]] = y[i];
+  var res = []
+  for (var k in obj) {
+    if (obj.hasOwnProperty(k))  // <-- optional
+      res.push(obj[k]);
+  }
+  return res;
+}
+
+//Функция объединения двух массивов
+function union_maps(first, second) {
+	var i = first.length;
+	var j = second.length;
+	var res = first;
+	for (var k = 0; k < j; k++) {
+		res[i] = second[k];
+		i++;
+	}
+	return res;
+}
+
+Array.prototype.contains = function(obj) {
+    var i = this.length;
+    while (i--) {
+        if (this[i] === obj) {
+            return true;
+        }
+    }
+    return false;
+}
+
 
