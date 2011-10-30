@@ -4,27 +4,20 @@ var seedPixel; //затравочный пиксель
 //Функция отрисовки фигуры по точкам на холсте
 function paintArea() {
     borders = [];
-    for (var i = 0; i < controlMap.length-1 ; i++) {
-        var array = [];
-        array[0] = controlMap[i];
-        array[1] = controlMap[i+1];
-        drawBrez({
-            x1:controlMap[i].x, 
-            y1:controlMap[i].y, 
-            x2:controlMap[i+1].x, 
-            y2:controlMap[i+1].y
-            });
-    }	
-    drawBrez({
-        x1:controlMap[controlMap.length-1].x, 
-        y1:controlMap[controlMap.length-1].y, 
-        x2:controlMap[0].x, 
-        y2:controlMap[0].y
-        });
+    var length = controlMap.length;
+    for (var i = 0; i < length; i++) {
+        var p1 = controlMap[i];
+        var p2 = controlMap[i == length - 1 ? 0 : i + 1];
+        drawBrez({x1:p1.x, y1:p1.y, x2:p2.x, y2:p2.y});
+    }
     drawAllPoints();
     map = borders;
 }
 
+function checkExist(x, y, stack) {
+    if (!pointExists(x, y))
+        stack.push({x: x, y:y, z:1});
+}
 
 //Функция, реализующая алгоритм заполнения с затравкой
 function simpleFilling() {
@@ -34,36 +27,12 @@ function simpleFilling() {
         var point = stack.pop();
         var x = point.x;
         var y = point.y;
-        if (pointExists(x, y) == null) {
+        if (!pointExists(x, y))
             drawPoint(x, y);
-        } 
-        x++;
-        if (pointExists(x, y) == null) stack.push({
-            "x": x, 
-            "y":y, 
-            "z":1
-        });
-        x--;
-        y++;
-        if (pointExists(x, y) == null) stack.push({
-            "x": x, 
-            "y":y, 
-            "z":1
-        })
-        y--;
-        x--;
-        if (pointExists(x, y) == null) stack.push({
-            "x": x, 
-            "y":y, 
-            "z":1
-        })
-        y--;
-        x++;
-        if (pointExists(x, y) == null) stack.push({
-            "x": x, 
-            "y":y, 
-            "z":1
-        })
+        checkExist(++x, y, stack);
+        checkExist(--x, ++y, stack);
+        checkExist(--x, --y, stack);
+        checkExist(++x, --y, stack);
     }
 }
 
@@ -78,7 +47,7 @@ function stringFilling() {
         var point = stack.pop();
         var x = point.x;
         var y = point.y;
-        if (pointExists(x, y) == null) {
+        if (!pointExists(x, y)) {
             drawPoint(x, y);
         } else {
             continue;
@@ -86,66 +55,33 @@ function stringFilling() {
         var i = x;
         while (i > minX) {
             i--;
-            if (pointExists(i, y) != null) {
-                stack.push({
-                    "x": i+1, 
-                    "y":y-1, 
-                    "z":1
-                })
-                stack.push({
-                    "x": i+1, 
-                    "y":y+1, 
-                    "z":1
-                })
+            if (pointExists(i, y)) {
+                stack.push({"x": i + 1,"y": y - 1,"z": 1});
+                stack.push({"x": i + 1,"y":y + 1,"z":1});
                 break;
             }
-            if (pointExists(i, y+1) == null) stack.push({
-                "x": i, 
-                "y":y+1, 
-                "z":1
-            })
-            if (pointExists(i, y-1) == null) stack.push({
-                "x": i, 
-                "y":y-1, 
-                "z":1
-            })
+            checkExist(i, y + 1, stack);
+            checkExist(i, y - 1, stack);
             drawPoint(i, y);
         }
         i = x;
         while (i < maxX) {
             i++;
             if (pointExists(i, y) != null) {
-				
-                stack.push({
-                    "x": i-1, 
-                    "y":y-1, 
-                    "z":1
-                })	
-                stack.push({
-                    "x": i-1, 
-                    "y":y+1, 
-                    "z":1
-                })		
+                stack.push({"x": i - 1,"y":y - 1,"z":1});
+                stack.push({"x": i - 1,"y":y + 1,"z":1});
                 break;
             }
-            if (pointExists(i, y+1) == null) stack.push({
-                "x": i, 
-                "y":y+1, 
-                "z":1
-            })
-            if (pointExists(i, y-1) == null) stack.push({
-                "x": i, 
-                "y":y-1, 
-                "z":1
-            })
+            checkExist(i, y + 1, stack);
+            checkExist(i, y - 1, stack);
             drawPoint(i, y);
         }
-    }	
+    }
 }
 
 //Функция, выполняющая поиск точки на границе фигуры с минимальными значением координаты Х
 function getXLeft() {
-    var minX = 9999;
+    var minX = borders[0].x;
     for (var i = 0; i < borders.length; i++) {
         var x = borders[i].x;
         if (x < minX) {
@@ -157,7 +93,7 @@ function getXLeft() {
 
 //Функция, выполняющая поиск точки на границе фигуры с максимальным значением координаты Х
 function getXRight() {
-    var maxX = -9999;
+    var maxX = borders[0].x;
     for (var i = 0; i < borders.length; i++) {
         var x = borders[i].x;
         if (x > maxX) {
