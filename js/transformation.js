@@ -1,28 +1,13 @@
 var planes;
 var vertexes;
-var vertexes2d;
 var prevVertexes;
 
 var DEFAULT_ZOOM_IN = 1.1;
+var MOVE_STEP = 10;
 var DEFAULT_ZOOM_OUT = 0.9;
 var ANGLE_30 = Math.PI / 6;
-var CUBE_SIZE = 100;
+var CS = 50;
 var CUBE_CANVAS_STEP = 1;
-
-//Начальные углы наклона куба
-var startTheta = ANGLE_30;
-var startPhi = ANGLE_30;
-// Расчет коэффициентов матрицы преобразования
-var st = Math.sin(startTheta);
-var ct = Math.cos(startTheta);
-var sp = Math.sin(startPhi);
-var cp = Math.cos(startPhi);
-//Матрица преобразования
-var projMatrix = [
-    [-st, -cp * ct],
-    [ct,-cp * st],
-    [0,sp]
-];
 
 var ROTATION = {
     X: "X",
@@ -94,14 +79,14 @@ function rotate(pointMatrix, angle, direction) {
 function getStartCubeCoords() {
     prevVertexes = null;
     vertexes = [
-        [0, 0, 0, 1],
-        [CUBE_SIZE, 0, 0, 1],
-        [CUBE_SIZE, CUBE_SIZE, 0, 1],
-        [0, CUBE_SIZE, 0, 1],
-        [0, 0, CUBE_SIZE, 1],
-        [CUBE_SIZE, 0, CUBE_SIZE, 1],
-        [CUBE_SIZE, CUBE_SIZE, CUBE_SIZE, 1],
-        [0, CUBE_SIZE, CUBE_SIZE, 1]
+        [-CS, -CS, -CS, 1],
+        [CS, -CS, -CS, 1],
+        [CS, CS, -CS, 1],
+        [-CS, CS, -CS, 1],
+        [-CS, -CS, CS, 1],
+        [CS, -CS, CS, 1],
+        [CS, CS, CS, 1],
+        [-CS, CS, CS, 1]
     ];
 
     planes = [
@@ -115,40 +100,22 @@ function getStartCubeCoords() {
 }
 
 function drawFigure() {
-    vertexes2d = [];
-    canvasStep = CUBE_CANVAS_STEP;
     clearCanvas();
-    makeProjection();
-    map = vertexes2d;
-
+    var hidePlanes = hidePlanesCheckBox.prop('checked');
+    var visibleVector = hidePlanes ? checkPlanes() : null;
     for (var i = 0; i < planes.length; i++) {
-        var plane = planes[i];
-        if (isPlaneVisible(plane)) {
+        if (!hidePlanes || visibleVector[i]){
+            var plane = planes[i];
             var length = plane.length;
-            for (var j = 0; j < length ; j++) {
-                var v1 = vertexes2d[plane[j]];
-                var v2 = vertexes2d[plane[j == length - 1 ? 0 : j + 1]];
-                drawBrez({x1:v1.x, y1:v1.y, x2:v2.x, y2:v2.y});
+            for (var j = 0; j < length; j++) {
+                var v1 = vertexes[plane[j]];
+                var v2 = vertexes[plane[j == length - 1 ? 0 : j + 1]];
+                drawBrez({x1:v1[0], y1:v1[1], x2:v2[0], y2:v2[1]});
             }
         }
     }
     printVertexes();
 }
-
-function makeProjection() {
-    //расчет видовых координат точек
-    for (var i = 0; i < vertexes.length; i++) {
-        var x = vertexes[i][0];
-        var y = vertexes[i][1];
-        var z = vertexes[i][2];
-
-        var x2d = projMatrix[0][0] * x + projMatrix[1][0] * y + 1;
-        var y2d = projMatrix[0][1] * x + projMatrix[1][1] * y + projMatrix[2][1] * z + 1;
-
-        vertexes2d.push({'x' : Math.round(x2d), 'y' : Math.round(y2d)});
-    }
-}
-
 
 function zoomCube(isZoomIn) {
     savePrevVertexes();
@@ -220,4 +187,12 @@ function printVertexes() {
             appendRow("td", 3, Math.round(vertex[0]), Math.round(vertex[1]), Math.round(vertex[2]));
         }
     }
+}
+
+function drawStartCube() {
+    setLabMode(LAB_MODE.CUBE);
+    getStartCubeCoords();
+    canvasStep = CUBE_CANVAS_STEP;
+    rotateCube(ROTATION.X);
+    rotateCube(ROTATION.Y);
 }
