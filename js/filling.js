@@ -10,7 +10,7 @@ function paintArea() {
     for (var i = 0; i < length; i++) {
         var p1 = controlMap[i];
         var p2 = controlMap[i == length - 1 ? 0 : i + 1];
-        drawBrez({x1:p1.x, y1:p1.y, x2:p2.x, y2:p2.y});
+        drawBrez(get2PointMap(p1,p2));
     }
     drawAllPoints();
     map = borders;

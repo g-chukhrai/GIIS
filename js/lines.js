@@ -1,10 +1,11 @@
 // Функция отрисовки отрезка методом ЦДА
-function drawCDA() {
+function drawCDA(points) {
     /*
      pts - переменная, хранящая координаты двух точек
      returnPoints() - функция получения координат точек с холста
      */
-    var pts = returnPoints(2);
+    var only_one = arguments.length != 1;
+    var pts = only_one ? returnPoints(2) : points;
     //Если на холсте присутствуют 2 точки, то выполняется следующий блок:
     if (pts != null) {
         //xLen - переменная, хранящая длину проекции по оси Х
@@ -57,9 +58,9 @@ function drawCDA() {
 }
 
 //Функция отрисовки отрезка алгоритмом Брезенхема
-function drawBrez(brez_points) {
+function drawBrez(brez_points, isCheckClipped) {
 
-    var only_one = arguments.length != 1;
+    var only_one = arguments.length == 0;
     var pts = only_one ? returnPoints(2) : brez_points;
 
     //Если на холсте присутствуют 2 точки, то выполняется следующий блок:
@@ -125,7 +126,9 @@ function drawBrez(brez_points) {
             //Добавление в таблицу отладочной информации строки, содержащей текущие значения переменных
             if (only_one) appendRow("td", 6, i, oldE, x, y, e, "(" + x + ";" + y + ")");
             //Отрисовка точки с полученными координатами
-            drawPoint(x, y);
+            if (!isCheckClipped || !isPointInsideClipRect({x:x,y:y})) {
+                drawPoint(x, y);
+            }
         }
         //Добавление в таблицу отладочной информации строки, содержащей текущие значения переменных
         if (only_one) {
@@ -133,9 +136,9 @@ function drawBrez(brez_points) {
             appendRow("th", 6, "", "", "", "dx", "dy", "");
             appendRow("td", 6, "", "", "", dx.toFixed(2), dy.toFixed(2), "");
         }
-		if (labMode = LAB_MODE.FILL_AREA) {
-			borders = union_maps(borders, map);
-		}
+        if (labMode == LAB_MODE.FILL_AREA) {
+            borders = union_maps(borders, map);
+        }
     }
 }
 //Отрисовка отрезка сглаженного влгоритмом Ву
