@@ -8,6 +8,8 @@ var oldPosX,oldPosY;
 var POINT_COLOR = "#0000ff";
 var POINT_CONTROL_COLOR = "#ff0000";
 var POINT_HOVER_COLOR = "#ff0000";
+var CORAL = "#ff7f50";
+var WHITE_SMOKE = "#f5f5f5";
 var tid = 0;
 var speed = 100;
 
@@ -26,8 +28,8 @@ var MODE = {
     DELETE_POINT : "DELETE_POINT",
     MOVE_POINT: "MOVE_POINT",
     CUBE: "CUBE",
-	ADD_SEED_PIXEL: "ADD_SEED_PIXEL"
-	
+    ADD_SEED_PIXEL: "ADD_SEED_PIXEL"
+
 };
 
 var LAB_MODE = {
@@ -36,7 +38,8 @@ var LAB_MODE = {
     BREZIER: "BREZIER",
     BSPLINE: "BSPLINE",
     CUBE: "CUBE",
-	FILL_AREA: "FILL_AREA"
+    FILL_AREA: "FILL_AREA",
+    HIDE_LINES: "HIDE_LINES"
 };
 
 var mode = MODE.MAIN;
@@ -77,6 +80,8 @@ function initJQueryComponents() {
     $('#koef').spinner({ min: 1, max: 25 , step: 1 });
     $('#a').spinner({ min: 1, max: 50 , step: 1 });
     $('#b').spinner({ min: 1, max: 50 , step: 1 });
+    $('#fieldSize').spinner({ min: 10, max: 150 , step: 10 });
+    $('#linesCount').spinner({ min: 1, max: 50 , step: 1 });
     showInfoCheckBox = $('input[name="showInfo"]');
     hidePlanesCheckBox = $('input[name="hidePlanes"]');
 
@@ -103,16 +108,16 @@ function initJQueryComponents() {
 
 function initEvents() {
     canvasElem.mousedown(function(e) {
-		posX = mouseLocalCord(e).x;
-		posY = mouseLocalCord(e).y;
-		if (mode != MODE.ADD_SEED_PIXEL) {
-			mode = MODE.DRAW_POINT;
-			if (tid == 0) {
-				tid = setInterval(function() {
-				mode = MODE.MOVE_POINT;
-			}, speed);
-			}
-	    }
+        posX = mouseLocalCord(e).x;
+        posY = mouseLocalCord(e).y;
+        if (mode != MODE.ADD_SEED_PIXEL) {
+            mode = MODE.DRAW_POINT;
+            if (tid == 0) {
+                tid = setInterval(function() {
+                    mode = MODE.MOVE_POINT;
+                }, speed);
+            }
+        }
 
     });
 
@@ -127,10 +132,10 @@ function initEvents() {
             mode = MODE.MAIN;
             movingPointNumber = null;
         } else if (mode == MODE.ADD_SEED_PIXEL) {
-			seedPixel = {"x": posX, "y": posY, "z":1};
-			drawPoint(posX, posY);
-			mode = MODE.MAIN;
-		}
+            seedPixel = {"x": posX, "y": posY, "z":1};
+            drawPoint(posX, posY);
+            mode = MODE.MAIN;
+        }
         toggleOff();
     });
 
@@ -153,10 +158,15 @@ function initEvents() {
             }
             if (movingPointNumber != null) {
                 changePointPosition(mouseLocalCord(e).x, mouseLocalCord(e).y, movingPointNumber);
-                drawAlgorithm(false);
-				if (labMode = LAB_MODE.FILL_AREA) {
-					paintArea();
-				}
+                clearStandartMap();
+                if (labMode == LAB_MODE.HIDE_LINES) {
+                    drawHideLines();
+                } else if (labMode == LAB_MODE.FILL_AREA) {
+                    stopThread = true;
+                    paintArea();
+                } else {
+                    drawAlgorithm(false);
+                }
             }
         } else if (mode == MODE.MAIN) {
             var x = mouseLocalCord(e).x;

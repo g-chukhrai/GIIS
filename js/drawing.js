@@ -147,13 +147,13 @@ function draw2Points() {
     drawRandomPoint(-limit, limit);
     drawRandomPoint(-limit, limit);
 }
+
 function drawRandomPoint(from, to) {
     drawPoint(Math.rand(from, to), Math.rand(from, to));
 }
 
 //Функция отрисовки алгоритма (используется во время перемещения "контрольной точки")
 function drawAlgorithm(isRandom) {
-    clearStandartMap();
     if (labMode == LAB_MODE.HERMITE) {
         drawHermite(isRandom);
     } else if (labMode == LAB_MODE.BREZIER) {

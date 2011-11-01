@@ -116,9 +116,10 @@ function getRandomPoints(count) {
     for (var i = 0; i < count; i++) {
         addToMap(Math.rand(-limit, limit), Math.rand(-limit, limit), true);
     }
-    drawAllPoints();
+    if (labMode != LAB_MODE.HIDE_LINES) {
+        drawAllPoints();
+    }
 }
-
 
 //Функция объединения двух массивов
 function union_maps(first, second) {
@@ -140,6 +141,16 @@ Array.prototype.contains = function(obj) {
         }
     }
     return false;
+};
+
+function get2PointMap(p1,p2){
+    return {x1:p1.x,y1:p1.y,x2:p2.x,y2:p2.y};
 }
+
+function printPoint(p, name){
+    console.log("point " + name + ": " + p.x + ":" + p.y );
+}
+
+
 
 
