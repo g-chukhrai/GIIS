@@ -75,6 +75,7 @@ function changePointPosition(x, y, number) {
     controlMap[number] = {'x' : x, 'y' : y, 'z' : 1};
 }
 
+//Функция создания матрицы размера mm*qq
 function createMatrix(mm, qq) {
     var result = new Array(mm);
     for (var m = 0; m < mm; m++) {
@@ -86,6 +87,7 @@ function createMatrix(mm, qq) {
     return result;
 }
 
+//Функция, выполняющая умножение матриц m1 и m2
 function multiplyMatrix(m1, m2) {
     var mm = m1.length;
     var nn = m1[0].length;

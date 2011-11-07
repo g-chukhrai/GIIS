@@ -154,7 +154,7 @@
                 <button onclick="translateCube(0,MOVE_STEP,0)" class="miniButton width_20">y</button>
                 <button onclick="translateCube(0,0,MOVE_STEP)" class="miniButton width_20">z</button>
                 <br/>
-                <button onclick="projectionCube(CS*2)" class="miniButton width_100">Z-projection</button>
+                <button onclick="projectionCube(2)" class="miniButton width_100">Perspective projection</button>
 
                 <!--<div id="joystick">-->
                 <!--<div id="mover"></div>-->
@@ -177,7 +177,9 @@
             <h3>Lab 5 (Triangulation)</h3>
 
             <div>
-                <button onclick="triangulationOn();" class="miniButton width_100">Start
+                <button onclick="clearVertices(); triangulationOn();" class="miniButton width_100">Start
+                </button>
+				<button onclick="triangulationTest();" class="miniButton width_100">Test
                 </button>
                 <br>
 

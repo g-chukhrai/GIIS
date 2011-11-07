@@ -1,14 +1,16 @@
-var vertices = [];
+﻿var vertices = []; //Массив вершин триангуляции
 
-var Delaunay = Delaunay || {};
+var Delaunay = Delaunay || {}; //Создание объекта, реализующего операцию триангуляции
 
+//Функция нахождения и отрисовки всех треугольников триангуляции
 function reDraw(vertices) {
-    clearContext();
-    var delaunay = Delaunay.Triangulate(vertices);
-
-    var L = delaunay.length;
+    clearContext(); //Очистка холста
+	context.strokeStyle = LINE_COLOR; //Установка цвета линии
+    var delaunay = Delaunay.Triangulate(vertices); //Получения списка треугольников триангуляции
+    var L = delaunay.length; //Длина списка треугольников триангуляции
     for (var i = 0; i < L; i++) {
-        var t = delaunay[ i ];
+        var t = delaunay[ i ]; //Треугольник t рассматриваемый на итерации i
+		//Отрисовка треугольника
         context.beginPath();
         context.moveTo(t.p1.x, t.p1.y);
         context.lineTo(t.p2.x, t.p2.y);
@@ -18,96 +20,103 @@ function reDraw(vertices) {
     }
 }
 
+//Функция, заполняющая массив вершин триангуляции случайными точками, количеством от 6 до 12
+function triangulationTest() {
+	clearVertices();
+	var randomCount = Math.rand(6, 12);
+	console.log(randomCount);
+	for (var i = 0; i < randomCount; i++) {
+        vertices.push(new Delaunay.Point(Math.rand(-halfHeight, halfHeight), Math.rand(-halfHeight, halfHeight)));
+    }
+	triangulationOn()
+}
 
+//Функция очистки массива вершин триангуляции
+function clearVertices() {
+	vertices = [];
+}
+
+//Функция запуска процесса триангуляции и отрисовки результата
 function triangulationOn() {
     canvasStep = 1;
     clearContext();
     setMode(MODE.TRIANGULATION);
+	/*
+	//Занесение в массив вершин триангуляции четырех крайних точек холста
+	vertices.push(new Delaunay.Point(-halfWidth, halfHeight));
+	vertices.push(new Delaunay.Point(halfWidth, halfHeight));
+	vertices.push(new Delaunay.Point(halfWidth, -halfHeight));
+	vertices.push(new Delaunay.Point(-halfWidth, -halfHeight));
+	*/
+    reDraw(vertices);
  }
 
+ /* Функция, выполняющая триангуляцию
+ На вход подается массив вершин.
+ Возвращает список треугольников.
+ */
 Delaunay.Triangulate = function (vertices) {
-
-    var i;
-    var j;
-    var nv = vertices.length;
-
+    var nv = vertices.length; //Длина массива вершин триангуляции
+	//Если длина массива меньше трех, то выход из функции
     if (nv < 3) return [];
 
     var trimax = 4 * nv;
 
-    // Find the maximum and minimum vertex bounds.
-    // This is to allow calculation of the bounding supertriangle
-
+    // Поиск вершин с максимальными и минимальными координатами (необходимо для построения "супертреугольника")
     var xmin = vertices[0].x;
     var ymin = vertices[0].y;
     var xmax = xmin;
     var ymax = ymin;
 
-    for (i = 1; i < nv; i++) {
+    for (var i = 1; i < nv; i++) {
         vertices[i].id = i;
         if (vertices[i].x < xmin) xmin = vertices[i].x;
         if (vertices[i].x > xmax) xmax = vertices[i].x;
         if (vertices[i].y < ymin) ymin = vertices[i].y;
         if (vertices[i].y > ymax) ymax = vertices[i].y;
     }
-
+	//Нахождение расстояния между вершинами с макс. и мин. координатами по осям ОХ и ОУ
     var dx = xmax - xmin;
     var dy = ymax - ymin;
+	//Выбор наибольшего расстояния 
     var dmax = (dx > dy) ? dx : dy;
     var xmid = (xmax + xmin) * 0.5;
     var ymid = (ymax + ymin) * 0.5;
 
-    // Set up the supertriangle
-    // This is a triangle which encompasses all the sample points.
-    // The supertriangle coordinates are added to the end of the
-    // vertex list. The supertriangle is the first triangle in
-    // the triangle list.
-
+	//Определение и добавление вершин "супертреугольника" в список вершин
     vertices.push(new Delaunay.Point((xmid - 2 * dmax), (ymid - dmax), nv + 1));
     vertices.push(new Delaunay.Point(xmid, (ymid + 2 * dmax), nv + 2));
     vertices.push(new Delaunay.Point((xmid + 2 * dmax), (ymid - dmax), nv + 3));
 
-    var triangles = []; //array type de triangles
-
+    var triangles = []; //Инициализация списка треугольников.
+	//Установка переменных идентификаторов
     vertices[ nv ].id = nv;
     vertices[ nv + 1 ].id = nv + 1;
     vertices[ nv + 2 ].id = nv + 2;
+	//Добавление супертреугольника в список треугольников под индексом 0
+    triangles.push(new Delaunay.Triangle(vertices[ nv ], vertices[ nv + 1 ], vertices[ nv + 2 ])); 
 
-    triangles.push(new Delaunay.Triangle(vertices[ nv ], vertices[ nv + 1 ], vertices[ nv + 2 ])); //SuperTriangle placed at index 0
+    //Добавление каждой точки из списка вершин триангуляции в существующую триангуляцию
+    for (var i = 0; i < nv; i++) {
+        var Edges = []; //Инициализация буфера ребер
 
-
-    // Include each point one at a time into the existing mesh
-    for (i = 0; i < nv; i++) {
-
-        var Edges = []; // [trimax * 3];
-
-        // Set up the edge buffer.
-        // If the point (Vertex(i).x,Vertex(i).y) lies inside the circumcircle then the
-        // three edges of that triangle are added to the edge buffer and the triangle is removed from list.
-        for (j = 0; j < triangles.length; j++) {
-
+		//Просмотр всех треугольников
+        for (var j = 0; j < triangles.length; j++) {
+			// Если рассматриваемая точка лежит на окружности треугольника, то
+			// добавить три ребра треугольника в буфер ребер и удалить рассматриваемый треугольник из списка треугольников
             if (Delaunay.InCircle(vertices[ i ], triangles[ j ].p1, triangles[ j ].p2, triangles[ j ].p3)) {
-
                 Edges.push(new Delaunay.Edge(triangles[j].p1, triangles[j].p2));
                 Edges.push(new Delaunay.Edge(triangles[j].p2, triangles[j].p3));
                 Edges.push(new Delaunay.Edge(triangles[j].p3, triangles[j].p1));
 
                 triangles.splice(j, 1);
-
                 j--;
-
             }
-
         }
+        if (i >= nv) continue; 
 
-        if (i >= nv) continue; //In case we the last duplicate point we removed was the last in the array
-
-
-        // Remove duplicate edges
-        // Note: if all triangles are specified anticlockwise then all
-        // interior edges are opposite pointing in direction.
-
-        for (j = Edges.length - 2; j >= 0; j--) {
+		//Удаление дубликатов ребер из буфера ребер
+        for (var j = Edges.length - 2; j >= 0; j--) {
 
             for (var k = Edges.length - 1; k >= j + 1; k--) {
 
@@ -117,69 +126,45 @@ Delaunay.Triangulate = function (vertices) {
                     Edges.splice(j, 1);
                     k--;
                     continue;
-
                 }
-
             }
-
         }
 
-        // Form new triangles for the current point
-        // Skipping over any tagged edges.
-        // All edges are arranged in clockwise order.
-        for (j = 0; j < Edges.length; j++) {
+		//Добавление в список треугольников всех треугольников,
+		//образованные рассматриваемой точкой и краями охватывающего полигона
+        for (var j = 0; j < Edges.length; j++) {
 
             if (triangles.length >= trimax) {
-                //	throw new ApplicationException("Exceeded maximum edges");
-                DEBUG.warning("Exceeded maximum edges");
+                console.log("Exceeded maximum edges");
             }
-            triangles.push(new Delaunay.Triangle(Edges[ j ].p1, Edges[ j ].p2, vertices[ i ]));
-
+            triangles.push(new Delaunay.Triangle(Edges[j].p1, Edges[j].p2, vertices[i]));
         }
-
-        Edges = [];
-
+        Edges = []; //Очистка буфера ребер
     }
 
-
-    // Remove triangles with supertriangle vertices
-    // These are triangles which have a vertex number greater than nv
-
-
-    for (i = triangles.length - 1; i >= 0; i--) {
+    // Удаление треугольников, построенных на вершинах "супертреугольника"
+    for (var i = triangles.length - 1; i >= 0; i--) {
         if (triangles[ i ].p1.id >= nv || triangles[ i ].p2.id >= nv || triangles[ i ].p3.id >= nv) {
             triangles.splice(i, 1);
-
         }
     }
-
-
-    //Remove SuperTriangle vertices
+    //Удаление вершин "супертреугольника"
     vertices.splice(vertices.length - 1, 1);
     vertices.splice(vertices.length - 1, 1);
     vertices.splice(vertices.length - 1, 1);
-
-
     return triangles.concat();
-
 }
 
 
-//INCIRCLE
+//Функция, определяющая находится ли точка p в окружности построенной на точках p1, p2, p3
 Delaunay.InCircle = function (p, p1, p2, p3) {
 
-    //Return TRUE if the point (xp,yp) lies inside the circumcircle
-    //made up by points (x1,y1) (x2,y2) (x3,y3)
-    //NOTE: A point on the edge is inside the circumcircle
-
-    var Epsilon = Number.MIN_VALUE;
-
+    var Epsilon = Number.MIN_VALUE; //Переменная, хранящая наименьшее положительное значение переменной
+	//Если точки совпадают - выход из функции
     if (Math.abs(p1.y - p2.y) < Epsilon && Math.abs(p2.y - p3.y) < Epsilon) {
-        //INCIRCUM - F - Points are coincident !!
         return false;
     }
-
-
+	//Декларация промежуточных переменных
     var m1;
     var m2;
     var mx1;
@@ -193,7 +178,7 @@ Delaunay.InCircle = function (p, p1, p2, p3) {
         m2 = -(p3.x - p2.x) / (p3.y - p2.y);
         mx2 = (p2.x + p3.x) * 0.5;
         my2 = (p2.y + p3.y) * 0.5;
-        //Calculate CircumCircle center (xc,yc)
+        //Вычисление центра окружности (xc, yc)
         xc = (p2.x + p1.x) * 0.5;
         yc = m2 * (xc - mx2) + my2;
     }
@@ -201,7 +186,7 @@ Delaunay.InCircle = function (p, p1, p2, p3) {
         m1 = -(p2.x - p1.x) / (p2.y - p1.y);
         mx1 = (p1.x + p2.x) * 0.5;
         my1 = (p1.y + p2.y) * 0.5;
-        //Calculate CircumCircle center (xc,yc)
+        //Вычисление центра окружности (xc, yc)
         xc = (p3.x + p2.x) * 0.5;
         yc = m1 * (xc - mx1) + my1;
     }
@@ -212,17 +197,16 @@ Delaunay.InCircle = function (p, p1, p2, p3) {
         mx2 = (p2.x + p3.x) * 0.5;
         my1 = (p1.y + p2.y) * 0.5;
         my2 = (p2.y + p3.y) * 0.5;
-        //Calculate CircumCircle center (xc,yc)
+        //Вычисление центра окружности (xc, yc)
         xc = (m1 * mx1 - m2 * mx2 + my2 - my1) / (m1 - m2);
         yc = m1 * (xc - mx1) + my1;
     }
 
     var dx = p2.x - xc;
     var dy = p2.y - yc;
-    var rsqr = dx * dx + dy * dy;
-    //double r = Math.Sqrt(rsqr); //Circumcircle radius
-    dx = p.x - xc;
-    dy = p.y - yc;
+    var rsqr = dx * dx + dy * dy; //радиус окружности в квадрате
+    dx = p.x - xc; //Расстояние от рассматриваемой точки до центра окружности по оси Х
+    dy = p.y - yc; //Расстояние от рассматриваемой точки до центра окружности по оси Y
     var drsqr = dx * dx + dy * dy;
 
     return ( drsqr <= rsqr );
@@ -231,7 +215,7 @@ Delaunay.InCircle = function (p, p1, p2, p3) {
 }
 
 
-//TRIANGLE
+//Функция, инициализирующая объект типа "треугольник"
 Delaunay.Triangle = function (point1, point2, point3) {
     var that = this;
 
@@ -246,7 +230,7 @@ Delaunay.Triangle = function (point1, point2, point3) {
     this.mid2; //p2 > p0
 }
 
-
+//Функция определения центра треугольника
 Delaunay.Triangle.prototype.getCenter = function () {
     if (this.center == null) center = new Delaunay.Point(0, 0);
     center.x = ( this.p1.x + this.p2.x + this.p3.x ) / 3;
@@ -255,7 +239,7 @@ Delaunay.Triangle.prototype.getCenter = function () {
 
 }
 
-
+//Функция определения центров ребер треугольника
 Delaunay.Triangle.prototype.getSidesCenters = function () {
     if (this.mid0 == null || this.mid1 == null || this.mid2 == null) {
         mid0 = new Delaunay.Point(0, 0);
@@ -273,7 +257,7 @@ Delaunay.Triangle.prototype.getSidesCenters = function () {
     this.mid2.y = this.p3.y + ( this.p1.y - this.p3.y ) / 2;
 }
 
-//POINT
+//Функция, инициализирующая объект типа "точка"
 Delaunay.Point = function (px, py) {
     var that = this;
     var ox = px;
@@ -284,17 +268,18 @@ Delaunay.Point = function (px, py) {
     this.y = py;
 }
 
-
+//Функция, возвращающая расстояние от рассматриваемой точки до otherpoint
 Delaunay.Point.prototype.distance = function (otherpoint) {
     return  Math.sqrt(((otherpoint.x - this.x) * (otherpoint.x - this.x)) + ((otherpoint.y - this.y) * (otherpoint.y - this.y)));
 }
 
+//Функция проверки эквивалентности рассматриваемой точки и otherpoint
 Delaunay.Point.prototype.equals2d = function (otherpoint) {
     return ( this.x == otherpoint.x && this.y == otherpoint.y );
 
 }
 
-//EDGE
+//Функция, инициализирующая объект типа "ребро"
 Delaunay.Edge = function (point1, point2) {
     var that = this;
 
@@ -302,6 +287,7 @@ Delaunay.Edge = function (point1, point2) {
     this.p2 = point2;
 }
 
+//Функция проверки эквивалентности двух ребер
 Delaunay.Edge.prototype.equals = function (otherEdge) {
     return ((this.p1 == otherEdge.p2) && (this.p2 == otherEdge.p1)) || ((this.p1 == otherEdge.p1) && (this.p2 == otherEdge.p2));
 }

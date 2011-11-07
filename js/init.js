@@ -8,6 +8,7 @@ var oldPosX,oldPosY;
 var POINT_COLOR = "#0000ff";
 var POINT_CONTROL_COLOR = "#ff0000";
 var POINT_HOVER_COLOR = "#ff0000";
+var LINE_COLOR = "blue";
 var CORAL = "#ff7f50";
 var WHITE_SMOKE = "#f5f5f5";
 var tid = 0;
