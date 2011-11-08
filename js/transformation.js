@@ -132,63 +132,24 @@ function getStartCubeCoords() {
     ];
 }
 
-////Функция отрисовки фигуры
-//function drawFigure() {
-//    //Очистка холста
-//    clearCanvas();
-//    //Установка индикатора необходимости скрытия невидимых граней
-//    var hidePlanes = hidePlanesCheckBox.prop('checked');
-//    var visibleVector = hidePlanes ? checkPlanes() : null;
-//    //Отрисовка фигуры
-//    for (var i = 0; i < planes.length; i++) {
-//        if (!hidePlanes || visibleVector[i]){
-//            var plane = planes[i];
-//            var length = plane.length;
-//			var v1 = vertexes[plane[0]];
-//			context.strokeStyle = LINE_COLOR; //Установка цвета линии
-//			context.beginPath();  //Включить режим отрисовки
-//			context.moveTo(v1[0], v1[1]);  //Установка инструмента рисования в начальную точку
-//             //Цикл отрисовки ребер фигуры
-//			 for (var j = 0; j < length; j++) {
-//				v1 = vertexes[plane[j]];
-//                var v2 = vertexes[plane[j == length - 1 ? 0 : j + 1]];
-//				context.lineTo(v2[0], v2[1]); //Отрисовка ребра
-//			 }
-//			context.stroke(); //Выключить режим отрисовки
-//			/*
-//            for (var j = 0; j < length; j++) {
-//                var v1 = vertexes[plane[j]];
-//                var v2 = vertexes[plane[j == length - 1 ? 0 : j + 1]];
-//                //drawBrez({x1:v1[0], y1:v1[1], x2:v2[0], y2:v2[1]});
-//			    //context.beginPath();
-//				context.moveTo(v1[0], v1[1]);
-//				context.lineTo(v2[0], v2[1]);
-//				//context.lineTo(t.p3.x, t.p3.y);
-//				//context.lineTo(t.p1.x, t.p1.y);
-//				//context.stroke();
-//
-//            }
-//			*/
-//        }
-//    }
-//    //Вывод отладочной информации
-//    printVertexes();
-//}
-
 function drawFigure() {
     vertexes2d = [];
     canvasStep = CUBE_CANVAS_STEP;
     clearCanvas();
     makeProjection();
     map = vertexes2d;
-
+    context.strokeStyle = LINE_COLOR; //Установка цвета линии
+    context.beginPath();  //Включить режим отрисовки
     for (var i = 0; i < planes.length; i++) {
         for (var j = 0; j < planes[i].length - 1; j++) {
             var v1 = vertexes2d[planes[i][j]];
             var v2 = vertexes2d[planes[i][j + 1]];
-            drawBrez({x1:v1.x, y1:v1.y, x2:v2.x, y2:v2.y});
+            context.moveTo(v1.x, v1.y);  //Установка инструмента рисования в начальную точку
+            context.lineTo(v2.x, v2.y); //Отрисовка ребра
+//            drawBrez({x1:v1.x, y1:v1.y, x2:v2.x, y2:v2.y});
         }
     }
+    context.stroke(); //Выключить режим отрисовки
     printVertexes();
 }
 
