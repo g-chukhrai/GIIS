@@ -92,13 +92,13 @@ function drawHideLines() {
         var p2 = controlMap[i + 1];
         var isClipped = false;
         if (isTrivialVisible(p1, p2)) {
-            context.fillStyle = WHITE_SMOKE;
-        } else if (isTrivialInvisible(p1, p2)) {
             context.fillStyle = CORAL;
+        } else if (isTrivialInvisible(p1, p2)) {
+            context.fillStyle = WHITE_SMOKE;
         } else {
             isClipped = true;
             drawClippedLine(p1, p2);
-            context.fillStyle = POINT_COLOR;
+            context.fillStyle = WHITE_SMOKE
         }
         drawBrez(get2PointMap(p1, p2), isClipped);
     }
@@ -146,7 +146,7 @@ function isTrivialInvisible(p1, p2) {
 }
 
 function drawClippedLine(p1, p2) {
-    context.fillStyle = WHITE_SMOKE;
+    context.fillStyle = CORAL;
     var dx = p2.x - p1.x;
     var dy = p2.y - p1.y;
     if (dx == 0 || dy == 0) {
@@ -197,5 +197,40 @@ function drawClippedLine(p1, p2) {
         printPoint(p2, "p2");
         drawBrez(get2PointMap(p1, p2));
     }
+}
+
+function clipCB(p1, p2) {
+
+    var temp = {x: p1.x - p2.x, y:p1.y - p2.y};
+
+    var t1 = -p1.x / temp.x;
+    var t2 = -p1.y / temp.x;
+    var t3 = -(p1.y - hideFieldSize) / temp.y;
+    var t4 = -(p1.x - hideFieldSize) / temp.x;
+
+    var tempStartX;
+    var tempStartY;
+    if (t1 > 0 && t1 < 1) {
+        tempStartX = (p1.x + t1 * (p2.x - p1.x));
+        tempStartY = (p1.y + t1 * (p2.y - p1.y));
+    } else if (t2 > 0 && t2 < 1) {
+        tempStartX = (p1.x + t2 * (p2.x - p1.x));
+        tempStartY = (p1.y + t2 * (p2.y - p1.y));
+    }
+
+    var tempEndX;
+    var tempEndY;
+    if (t3 > 0 && t3 < 1) {
+        tempEndX = (p1.x - t3 * temp.x);
+        tempEndY = (p1.y - t3 * temp.y);
+    } else if (t4 > 0 && t4 < 1) {
+        tempEndX = (p1.x - t4 * temp.x);
+        tempEndY = (p1.y - t4 * temp.y);
+    }
+
+    return [
+        {x:tempStartX,y:tempStartY},
+        {x:tempEndX,y:tempEndY}
+    ];
 }
 
