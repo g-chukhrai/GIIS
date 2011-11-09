@@ -139,11 +139,8 @@ function drawFigure() {
     clearCanvas();
     //Установка индикатора необходимости скрытия невидимых граней
     var hidePlanes = hidePlanesCheckBox.prop('checked');
-    if (makeProjectionCheckBox.prop('checked')) {
-        projectionCube(parseInt($("#d").val()));
-    }
     var visibleVector = hidePlanes ? checkPlanes() : null;
-    makeProjection();
+    make2DProjection();
     map = vertexes2d;
     context.strokeStyle = LINE_COLOR; //Установка цвета линии
     context.beginPath();  //Включить режим отрисовки
@@ -155,7 +152,6 @@ function drawFigure() {
                 var v2 = vertexes2d[planes[i][j == lastIndex ? 0 : j + 1]];
                 context.moveTo(v1.x, v1.y);  //Установка инструмента рисования в начальную точку
                 context.lineTo(v2.x, v2.y); //Отрисовка ребра
-//            drawBrez({x1:v1.x, y1:v1.y, x2:v2.x, y2:v2.y});
             }
         }
     }
@@ -163,7 +159,7 @@ function drawFigure() {
     printVertexes();
 }
 
-function makeProjection() {
+function make2DProjection() {
     //расчет видовых координат точек
     for (var i = 0; i < vertexes.length; i++) {
         var x = vertexes[i][0];
@@ -222,14 +218,16 @@ function rotateCube(rotation, mirror) {
     var c = findCenter();
     //Применение преобразований к каждой вершине куба
     $.each(vertexes, function(i, val) {
-        var start = [[
-            val[0] - c[0],
-            val[1] - c[1],
-            val[2] - c[2],
-            val[3]
-        ]];
+        var start = [
+            [
+                val[0] - c[0],
+                val[1] - c[1],
+                val[2] - c[2],
+                val[3]
+            ]
+        ];
 
-        result = rotate(start, mirror ? -ANGLE_45 : ANGLE_45, rotation);
+        result = rotate(start, mirror ? -ANGLE_30 : ANGLE_30, rotation);
 
         vertexes[i] = [
             result[0][0] + c[0],
@@ -259,21 +257,24 @@ function translateCube(x, y, z) {
 
 //Фукнция, выполняющая перспективную проекцию куба на расстояние d
 function projectionCube(d) {
+    if (arguments.length == 0) {
+        d = parseInt($("#d").val());
+    }
     //Сохранение данных о предыдуших вершинах куба
     savePrevVertexes();
     //Применение преобразований к каждой вершине куба
     $.each(vertexes, function(i, val) {
-        var z = vertexes[i][2];
-        vertexes[i][0] *= d / z + 1;
-        vertexes[i][1] *= d / z + 1;
-        vertexes[i][2] = d;
-        vertexes[i][3] = 1;
+        var z = val[2];
+        val[0] *= d / z + 1;
+        val[1] *= d / z + 1;
+        val[2] = d;
+        val[3] = 1;
 //        var point = new Array(val);
 //        var result = projection(point, d);
 //        vertexes[i] = result[0];
     });
     //Отрисовка куба
-//    drawFigure();
+    drawFigure();
 }
 
 //Функция, выполняющая сохранения данных о вершинах фигуры
@@ -315,5 +316,7 @@ function drawStartCube() {
     setLabMode(LAB_MODE.CUBE);
     getStartCubeCoords();
     canvasStep = CUBE_CANVAS_STEP;
-    drawFigure();
+//    drawFigure();
+    rotateCube(ROTATION.X,false);
+    rotateCube(ROTATION.Y,false);
 }

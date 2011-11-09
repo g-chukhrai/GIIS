@@ -145,12 +145,6 @@
                 <label>
                     Hide invisible planes: <input type="checkbox" name="hidePlanes">
                 </label>
-                <br/>
-                <label for="d">d:</label>
-                <input id="d" value="20" style="width: 40px" type="text"/>
-                <label>
-                    Make projection: <input type="checkbox" name="makeProjection">
-                </label>
                 <br/>Rotation:<br/>
                 <button onclick="rotateCube(ROTATION.X,false)" class="miniButton width_20">x</button>
                 <button onclick="rotateCube(ROTATION.Y,false)" class="miniButton width_20">y</button>
@@ -167,7 +161,10 @@
                 <button onclick="translateCube(-MOVE_STEP,0,0)" class="miniButton width_20">x</button>
                 <button onclick="translateCube(0,-MOVE_STEP,0)" class="miniButton width_20">y</button>
                 <button onclick="translateCube(0,0,-MOVE_STEP)" class="miniButton width_20">z</button>
-
+                <br/>
+                <label for="d">d:</label>
+                <input id="d" value="5" style="width: 40px" type="text"/>
+                <button onclick="projectionCube()" class="miniButton width_100">Projection</button>
                 <!--<div id="joystick">-->
                 <!--<div id="mover"></div>-->
                 <!--</div>-->
