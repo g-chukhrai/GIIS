@@ -7,6 +7,7 @@ var DEFAULT_ZOOM_IN = 1.1;
 var MOVE_STEP = 10;
 var DEFAULT_ZOOM_OUT = 0.9;
 var ANGLE_30 = Math.PI / 6;
+var ANGLE_45 = Math.PI / 4;
 var CS = 50;
 var CUBE_CANVAS_STEP = 1;
 
@@ -17,8 +18,8 @@ var ROTATION = {
 };
 
 //Начальные углы наклона куба
-var startTheta = ANGLE_30;
-var startPhi = ANGLE_30;
+var startTheta = ANGLE_45;
+var startPhi = ANGLE_45;
 // Расчет коэффициентов матрицы преобразования
 var st = Math.sin(startTheta);
 var ct = Math.cos(startTheta);
@@ -136,17 +137,22 @@ function drawFigure() {
     vertexes2d = [];
     canvasStep = CUBE_CANVAS_STEP;
     clearCanvas();
+    //Установка индикатора необходимости скрытия невидимых граней
+    var hidePlanes = hidePlanesCheckBox.prop('checked');
+    var visibleVector = hidePlanes ? checkPlanes() : null;
     makeProjection();
     map = vertexes2d;
     context.strokeStyle = LINE_COLOR; //Установка цвета линии
     context.beginPath();  //Включить режим отрисовки
     for (var i = 0; i < planes.length; i++) {
-        for (var j = 0; j < planes[i].length - 1; j++) {
-            var v1 = vertexes2d[planes[i][j]];
-            var v2 = vertexes2d[planes[i][j + 1]];
-            context.moveTo(v1.x, v1.y);  //Установка инструмента рисования в начальную точку
-            context.lineTo(v2.x, v2.y); //Отрисовка ребра
+        if (!hidePlanes || visibleVector[i]) {
+            for (var j = 0; j < planes[i].length - 1; j++) {
+                var v1 = vertexes2d[planes[i][j]];
+                var v2 = vertexes2d[planes[i][j + 1]];
+                context.moveTo(v1.x, v1.y);  //Установка инструмента рисования в начальную точку
+                context.lineTo(v2.x, v2.y); //Отрисовка ребра
 //            drawBrez({x1:v1.x, y1:v1.y, x2:v2.x, y2:v2.y});
+            }
         }
     }
     context.stroke(); //Выключить режим отрисовки
@@ -190,7 +196,7 @@ function rotateCube(rotation) {
     //Применение преобразований к каждой вершине куба
     $.each(vertexes, function(i, val) {
         var point = new Array(val);
-        var result = rotate(point, ANGLE_30, rotation);
+        var result = rotate(point, ANGLE_45, rotation);
         vertexes[i] = result[0];
     });
     //Отрисовка куба
