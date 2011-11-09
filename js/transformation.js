@@ -173,6 +173,27 @@ function makeProjection() {
     }
 }
 
+//Функция нахождения центра фигуры
+function findCenter() {
+	var p1 = vertexes[0];
+	var min_x = p1[0];
+	var min_y = p1[1];
+	var min_z = p1[2];
+	var max_x = min_x;
+	var max_y = min_y;
+	var max_z = min_z;
+	$.each(vertexes, function(i, p) {
+		if (p[0] < min_x)	min_x = p[0];
+		else if (p[0] > max_x) 	max_x = p[0];
+		if (p[1] < min_y)	min_y = p[1];
+		else if (p[1] > max_y)	max_y = p[1];
+		if (p[2] < min_z)	min_z = p[2];
+		else if (p[2] > max_z)	max_z = p[2];
+	});
+	p1 = [(min_x + max_x ) / 2, (min_y+max_y) / 2, (min_z +max_z ) / 2, 1];
+	return p1;	
+}
+
 //Функция увеличения куба
 //isZoomIn - переменная, определяющая во сколько раз куб должен быть увеличен
 function zoomCube(isZoomIn) {
@@ -193,11 +214,29 @@ function zoomCube(isZoomIn) {
 function rotateCube(rotation) {
     //Сохранение данных о предыдуших вершинах куба
     savePrevVertexes();
+	//Нахождение центра фигуры
+	var c = findCenter();
     //Применение преобразований к каждой вершине куба
     $.each(vertexes, function(i, val) {
+<<<<<<< HEAD
         var point = new Array(val);
         var result = rotate(point, ANGLE_45, rotation);
         vertexes[i] = result[0];
+=======
+		
+		var start = [];
+		start[0] = val[0] - c[0];
+		start[1] = val[1] - c[1];
+		start[2] = val[2] - c[2];
+		start[3] = val[3];
+		
+		result = rotate(new Array(start), ANGLE_30, rotation);
+		
+		vertexes[i][0] = result[0][0]+c[0];
+		vertexes[i][1] = result[0][1]+c[1];
+		vertexes[i][2] = result[0][2]+c[2];
+		vertexes[i][3] = result[0][3];
+>>>>>>> 3a5a62f6723d8a08a7ea1ea2d9df2416d22d8420
     });
     //Отрисовка куба
     drawFigure();
