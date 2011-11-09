@@ -17,6 +17,11 @@ var ROTATION = {
     Z: "Z"
 };
 
+var FIGURE = {
+    CUBE: "CUBE",
+    PYRAMID: "PYRAMID"
+};
+
 //Начальные углы наклона куба
 var startTheta = 0;
 var startPhi = 0;
@@ -110,7 +115,7 @@ function rotate(pointMatrix, angle, direction) {
 }
 
 //Функция установки начальных координат вершин и описания граней
-function getStartCubeCoords() {
+function getStartCubeCords() {
     prevVertexes = null;
     vertexes = [
         [-CS, -CS, -CS, 1],
@@ -130,6 +135,24 @@ function getStartCubeCoords() {
         [0, 3, 7, 4],
         [0, 4, 5, 1],
         [2, 3, 7, 6]
+    ];
+}
+
+function getStartPyramidCords() {
+    prevVertexes = null;
+    vertexes = [
+        [0,0,CS,1],
+        [CS,CS,-CS,1],
+        [CS,-CS,-CS,1],
+        [-CS,CS,-CS,1],
+        [-CS,-CS,-CS,1]
+    ];
+    planes = [
+        [1,2,4,3],
+        [0,1,2],
+        [0,3,4],
+        [0,1,3],
+        [0,2,4]
     ];
 }
 
@@ -312,11 +335,11 @@ function printVertexes() {
 }
 
 //Функция, инициирующая начало работы с фигурой
-function drawStartCube() {
+function drawStartFigure(figure) {
     setLabMode(LAB_MODE.CUBE);
-    getStartCubeCoords();
+    figure == FIGURE.CUBE ?  getStartCubeCords() : getStartPyramidCords();
     canvasStep = CUBE_CANVAS_STEP;
 //    drawFigure();
-    rotateCube(ROTATION.X,false);
-    rotateCube(ROTATION.Y,false);
+    rotateCube(ROTATION.X, false);
+    rotateCube(ROTATION.Y, false);
 }
