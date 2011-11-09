@@ -92,10 +92,13 @@ function drawHideLines() {
         var p2 = controlMap[i + 1];
         var isClipped = false;
         if (isTrivialVisible(p1, p2)) {
+            clipCB("isTrivialVisible", p1, p2);
             context.fillStyle = CORAL;
         } else if (isTrivialInvisible(p1, p2)) {
+            clipCB("isTrivialInvisible", p1, p2);
             context.fillStyle = WHITE_SMOKE;
         } else {
+            clipCB("isClipped", p1, p2);
             isClipped = true;
             drawClippedLine(p1, p2);
             context.fillStyle = WHITE_SMOKE
@@ -157,80 +160,82 @@ function drawClippedLine(p1, p2) {
     var m = dy / dx;
     var p = [];
     if (isPointInsideClipRect(p1)) {
-        console.log("p1: " + p1.x + ":" + p1.y + " in clip");
+//        console.log("p1: " + p1.x + ":" + p1.y + " in clip");
         p.push(p1);
     }
     if (isPointInsideClipRect(p2)) {
-        console.log("p2: " + p2.x + ":" + p2.y + " in clip");
+//        console.log("p2: " + p2.x + ":" + p2.y + " in clip");
         p.push(p2);
     }
 
 
     var yLeft = m * (-hideFieldSize - p1.x) + p1.y;
     var left = {x:  -hideFieldSize, y : Math.floor(yLeft) };
-    printPoint(left, "left");
+//    printPoint(left, "left");
     if (( left.x >= p1.x || left.x >= p2.x ) && isPointInsideClipRect(left))
         p.push(left);
 
     var yRight = m * (hideFieldSize - p1.x) + p1.y;
     var right = {x: hideFieldSize, y : Math.floor(yRight)};
-    printPoint(right, "right");
+//    printPoint(right, "right");
     if (( right.x <= p1.x || right.x <= p2.x ) && isPointInsideClipRect(right))
         p.push(right);
 
     var xDown = p1.x + (-hideFieldSize - p1.y ) / m;
     var down = {x: Math.floor(xDown) , y :  -hideFieldSize };
-    printPoint(down, "down");
+//    printPoint(down, "down");
     if (( down.y >= p1.y || down.y >= p2.y ) && isPointInsideClipRect(down))
         p.push(down);
 
     var xUp = p1.x + ( hideFieldSize - p1.y ) / m;
     var up = {x: Math.floor(xUp), y : hideFieldSize };
-    printPoint(up, "up");
+//    printPoint(up, "up");
     if (( up.y <= p1.y || up.y <= p2.y ) && isPointInsideClipRect(up))
         p.push(up);
 
     if (p.length > 1) {
         p1 = {x:p[0].x, y: p[0].y};
         p2 = {x:p[1].x, y: p[1].y};
-        printPoint(p1, "p1");
-        printPoint(p2, "p2");
+//        printPoint(p1, "p1");
+//        printPoint(p2, "p2");
         drawBrez(get2PointMap(p1, p2));
     }
 }
 
-function clipCB(p1, p2) {
+function clipCB(ann, p1, p2) {
 
-    var temp = {x: p1.x - p2.x, y:p1.y - p2.y};
+    var dx = p2.x - p1.x;
+    var dy = p2.y - p1.y;
 
-    var t1 = -p1.x / temp.x;
-    var t2 = -p1.y / temp.x;
-    var t3 = -(p1.y - hideFieldSize) / temp.y;
-    var t4 = -(p1.x - hideFieldSize) / temp.x;
+    var t1 = p1.x / dx;
+    var t2 = p1.y / dx;
+    var t3 = (p1.y - hideFieldSize) / dy;
+    var t4 = (p1.x - hideFieldSize) / dx;
 
-    var tempStartX;
-    var tempStartY;
+    var tempStartX=0;
+    var tempStartY=0;
     if (t1 > 0 && t1 < 1) {
-        tempStartX = (p1.x + t1 * (p2.x - p1.x));
-        tempStartY = (p1.y + t1 * (p2.y - p1.y));
+        tempStartX = (p1.x + t1 * dx);
+        tempStartY = (p1.y + t1 * dy);
     } else if (t2 > 0 && t2 < 1) {
-        tempStartX = (p1.x + t2 * (p2.x - p1.x));
-        tempStartY = (p1.y + t2 * (p2.y - p1.y));
+        tempStartX = (p1.x + t2 * dx);
+        tempStartY = (p1.y + t2 * dy);
     }
 
-    var tempEndX;
-    var tempEndY;
+    var tempEndX=0;
+    var tempEndY=0;
     if (t3 > 0 && t3 < 1) {
-        tempEndX = (p1.x - t3 * temp.x);
-        tempEndY = (p1.y - t3 * temp.y);
+        tempEndX = (p1.x - t3 * dx);
+        tempEndY = (p1.y - t3 * dy);
     } else if (t4 > 0 && t4 < 1) {
-        tempEndX = (p1.x - t4 * temp.x);
-        tempEndY = (p1.y - t4 * temp.y);
+        tempEndX = (p1.x - t4 * dx);
+        tempEndY = (p1.y - t4 * dy);
     }
 
-    return [
-        {x:tempStartX,y:tempStartY},
-        {x:tempEndX,y:tempEndY}
-    ];
+    var p11 = {x:Math.round(tempStartX),y:Math.round(tempStartY)};
+    var p22 = {x:Math.round(tempEndX),y:Math.round(tempEndY)};
+    console.log(ann + " init: (" + p1.x + ";" + p1.y + ")-(" + p2.x + ";" + p2.y + ")" + " res: (" + p11.x + ";" + p11.y + ")-(" + p22.x + ";" + p22.y + ")");
+
+    return [p11,p22];
 }
 
