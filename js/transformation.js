@@ -18,8 +18,8 @@ var ROTATION = {
 };
 
 //Начальные углы наклона куба
-var startTheta = ANGLE_45;
-var startPhi = ANGLE_45;
+var startTheta = 0;
+var startPhi = 0;
 // Расчет коэффициентов матрицы преобразования
 var st = Math.sin(startTheta);
 var ct = Math.cos(startTheta);
@@ -146,9 +146,10 @@ function drawFigure() {
     context.beginPath();  //Включить режим отрисовки
     for (var i = 0; i < planes.length; i++) {
         if (!hidePlanes || visibleVector[i]) {
-            for (var j = 0; j < planes[i].length - 1; j++) {
+            var lastIndex = planes[i].length - 1;
+            for (var j = 0; j < lastIndex + 1; j++) {
                 var v1 = vertexes2d[planes[i][j]];
-                var v2 = vertexes2d[planes[i][j + 1]];
+                var v2 = vertexes2d[planes[i][j == lastIndex ? 0 : j + 1]];
                 context.moveTo(v1.x, v1.y);  //Установка инструмента рисования в начальную точку
                 context.lineTo(v2.x, v2.y); //Отрисовка ребра
 //            drawBrez({x1:v1.x, y1:v1.y, x2:v2.x, y2:v2.y});
@@ -175,23 +176,23 @@ function makeProjection() {
 
 //Функция нахождения центра фигуры
 function findCenter() {
-	var p1 = vertexes[0];
-	var min_x = p1[0];
-	var min_y = p1[1];
-	var min_z = p1[2];
-	var max_x = min_x;
-	var max_y = min_y;
-	var max_z = min_z;
-	$.each(vertexes, function(i, p) {
-		if (p[0] < min_x)	min_x = p[0];
-		else if (p[0] > max_x) 	max_x = p[0];
-		if (p[1] < min_y)	min_y = p[1];
-		else if (p[1] > max_y)	max_y = p[1];
-		if (p[2] < min_z)	min_z = p[2];
-		else if (p[2] > max_z)	max_z = p[2];
-	});
-	p1 = [(min_x + max_x ) / 2, (min_y+max_y) / 2, (min_z +max_z ) / 2, 1];
-	return p1;	
+    var p1 = vertexes[0];
+    var min_x = p1[0];
+    var min_y = p1[1];
+    var min_z = p1[2];
+    var max_x = min_x;
+    var max_y = min_y;
+    var max_z = min_z;
+    $.each(vertexes, function(i, p) {
+        if (p[0] < min_x)    min_x = p[0];
+        else if (p[0] > max_x)     max_x = p[0];
+        if (p[1] < min_y)    min_y = p[1];
+        else if (p[1] > max_y)    max_y = p[1];
+        if (p[2] < min_z)    min_z = p[2];
+        else if (p[2] > max_z)    max_z = p[2];
+    });
+    p1 = [(min_x + max_x ) / 2, (min_y + max_y) / 2, (min_z + max_z ) / 2, 1];
+    return p1;
 }
 
 //Функция увеличения куба
@@ -214,29 +215,22 @@ function zoomCube(isZoomIn) {
 function rotateCube(rotation) {
     //Сохранение данных о предыдуших вершинах куба
     savePrevVertexes();
-	//Нахождение центра фигуры
-	var c = findCenter();
+    //Нахождение центра фигуры
+    var c = findCenter();
     //Применение преобразований к каждой вершине куба
     $.each(vertexes, function(i, val) {
-<<<<<<< HEAD
-        var point = new Array(val);
-        var result = rotate(point, ANGLE_45, rotation);
-        vertexes[i] = result[0];
-=======
-		
-		var start = [];
-		start[0] = val[0] - c[0];
-		start[1] = val[1] - c[1];
-		start[2] = val[2] - c[2];
-		start[3] = val[3];
-		
-		result = rotate(new Array(start), ANGLE_30, rotation);
-		
-		vertexes[i][0] = result[0][0]+c[0];
-		vertexes[i][1] = result[0][1]+c[1];
-		vertexes[i][2] = result[0][2]+c[2];
-		vertexes[i][3] = result[0][3];
->>>>>>> 3a5a62f6723d8a08a7ea1ea2d9df2416d22d8420
+        var start = [];
+        start[0] = val[0] - c[0];
+        start[1] = val[1] - c[1];
+        start[2] = val[2] - c[2];
+        start[3] = val[3];
+
+        result = rotate(new Array(start), ANGLE_30, rotation);
+
+        vertexes[i][0] = result[0][0] + c[0];
+        vertexes[i][1] = result[0][1] + c[1];
+        vertexes[i][2] = result[0][2] + c[2];
+        vertexes[i][3] = result[0][3];
     });
     //Отрисовка куба
     drawFigure();
@@ -264,12 +258,10 @@ function projectionCube(d) {
     //Применение преобразований к каждой вершине куба
     $.each(vertexes, function(i, val) {
         var z = vertexes[i][2];
-
         vertexes[i][0] *= d / z + 1;
         vertexes[i][1] *= d / z + 1;
         vertexes[i][2] = d;
         vertexes[i][3] = 1;
-
 //        var point = new Array(val);
 //        var result = projection(point, d);
 //        vertexes[i] = result[0];
