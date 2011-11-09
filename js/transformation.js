@@ -139,6 +139,9 @@ function drawFigure() {
     clearCanvas();
     //Установка индикатора необходимости скрытия невидимых граней
     var hidePlanes = hidePlanesCheckBox.prop('checked');
+    if (makeProjectionCheckBox.prop('checked')) {
+        projectionCube(parseInt($("#d").val()));
+    }
     var visibleVector = hidePlanes ? checkPlanes() : null;
     makeProjection();
     map = vertexes2d;
@@ -212,25 +215,28 @@ function zoomCube(isZoomIn) {
 
 //Функция поворота куба
 //rotation - направление поворота
-function rotateCube(rotation) {
+function rotateCube(rotation, mirror) {
     //Сохранение данных о предыдуших вершинах куба
     savePrevVertexes();
     //Нахождение центра фигуры
     var c = findCenter();
     //Применение преобразований к каждой вершине куба
     $.each(vertexes, function(i, val) {
-        var start = [];
-        start[0] = val[0] - c[0];
-        start[1] = val[1] - c[1];
-        start[2] = val[2] - c[2];
-        start[3] = val[3];
+        var start = [[
+            val[0] - c[0],
+            val[1] - c[1],
+            val[2] - c[2],
+            val[3]
+        ]];
 
-        result = rotate(new Array(start), ANGLE_30, rotation);
+        result = rotate(start, mirror ? -ANGLE_45 : ANGLE_45, rotation);
 
-        vertexes[i][0] = result[0][0] + c[0];
-        vertexes[i][1] = result[0][1] + c[1];
-        vertexes[i][2] = result[0][2] + c[2];
-        vertexes[i][3] = result[0][3];
+        vertexes[i] = [
+            result[0][0] + c[0],
+            result[0][1] + c[1],
+            result[0][2] + c[2],
+            result[0][3]
+        ];
     });
     //Отрисовка куба
     drawFigure();
@@ -267,7 +273,7 @@ function projectionCube(d) {
 //        vertexes[i] = result[0];
     });
     //Отрисовка куба
-    drawFigure();
+//    drawFigure();
 }
 
 //Функция, выполняющая сохранения данных о вершинах фигуры

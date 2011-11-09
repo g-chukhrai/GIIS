@@ -20,7 +20,7 @@ var posX;
 var posY;
 var showInfoCheckBox;
 var hidePlanesCheckBox;
-
+var makeProjectionCheckBox;
 
 var MODE = {
     MAIN: "MAIN",
@@ -82,10 +82,12 @@ function initJQueryComponents() {
     $('#koef').spinner({ min: 1, max: 25 , step: 1 });
     $('#a').spinner({ min: 1, max: 50 , step: 1 });
     $('#b').spinner({ min: 1, max: 50 , step: 1 });
+    $('#d').spinner({ min: 5, max: 100 , step: 5 });
     $('#fieldSize').spinner({ min: 10, max: 150 , step: 10 });
     $('#linesCount').spinner({ min: 1, max: 50 , step: 1 });
     showInfoCheckBox = $('input[name="showInfo"]');
     hidePlanesCheckBox = $('input[name="hidePlanes"]');
+    makeProjectionCheckBox= $('input[name="makeProjection"]');
 
     $('#accordion').accordion();
 

@@ -145,16 +145,28 @@
                 <label>
                     Hide invisible planes: <input type="checkbox" name="hidePlanes">
                 </label>
+                <br/>
+                <label for="d">d:</label>
+                <input id="d" value="20" style="width: 40px" type="text"/>
+                <label>
+                    Make projection: <input type="checkbox" name="makeProjection">
+                </label>
                 <br/>Rotation:<br/>
-                <button onclick="rotateCube(ROTATION.X)" class="miniButton width_20">x</button>
-                <button onclick="rotateCube(ROTATION.Y)" class="miniButton width_20">y</button>
-                <button onclick="rotateCube(ROTATION.Z)" class="miniButton width_20">z</button>
+                <button onclick="rotateCube(ROTATION.X,false)" class="miniButton width_20">x</button>
+                <button onclick="rotateCube(ROTATION.Y,false)" class="miniButton width_20">y</button>
+                <button onclick="rotateCube(ROTATION.Z,false)" class="miniButton width_20">z</button>
+                <br/>
+                <button onclick="rotateCube(ROTATION.X,true)" class="miniButton width_20">x</button>
+                <button onclick="rotateCube(ROTATION.Y,true)" class="miniButton width_20">y</button>
+                <button onclick="rotateCube(ROTATION.Z,true)" class="miniButton width_20">z</button>
                 <br/>Translation:<br/>
                 <button onclick="translateCube(MOVE_STEP,0,0)" class="miniButton width_20">x</button>
                 <button onclick="translateCube(0,MOVE_STEP,0)" class="miniButton width_20">y</button>
                 <button onclick="translateCube(0,0,MOVE_STEP)" class="miniButton width_20">z</button>
                 <br/>
-                <button onclick="projectionCube(10)" class="miniButton width_100">Projection</button>
+                <button onclick="translateCube(-MOVE_STEP,0,0)" class="miniButton width_20">x</button>
+                <button onclick="translateCube(0,-MOVE_STEP,0)" class="miniButton width_20">y</button>
+                <button onclick="translateCube(0,0,-MOVE_STEP)" class="miniButton width_20">z</button>
 
                 <!--<div id="joystick">-->
                 <!--<div id="mover"></div>-->
@@ -179,7 +191,7 @@
             <div>
                 <button onclick="clearVertices(); triangulationOn();" class="miniButton width_100">Start
                 </button>
-				<button onclick="triangulationTest();" class="miniButton width_100">Test
+                <button onclick="triangulationTest();" class="miniButton width_100">Test
                 </button>
                 <br>
 
