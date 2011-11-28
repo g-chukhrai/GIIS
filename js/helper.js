@@ -118,7 +118,7 @@ function getRandomPoints(count) {
     for (var i = 0; i < count; i++) {
         addToMap(Math.rand(-limit, limit), Math.rand(-limit, limit), true);
     }
-    if (labMode != LAB_MODE.HIDE_LINES) {
+    if (labMode != LAB_MODE.HIDE_LINES && labMode != LAB_MODE.HIDE_LINES_CYRUS) {
         drawAllPoints();
     }
 }

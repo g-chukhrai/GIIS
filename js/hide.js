@@ -86,8 +86,10 @@ function drawRandomLines() {
 }
 
 function drawRandomCyrus() {
-    setLabMode(LAB_MODE.HIDE_LINES);
-    getRandomPoints(2);
+    setLabMode(LAB_MODE.HIDE_LINES_CYRUS);
+    hideFieldSize = parseInt($("#fieldSize").val());
+    hideLinesCount = parseInt($("#linesCount").val());
+    getRandomPoints(hideLinesCount * 2);
     drawHideLinesCyrus();
 }
 
@@ -113,23 +115,23 @@ function drawHideLines() {
 }
 
 function drawHideLinesCyrus() {
-    var length = controlMap.length;
-    var p = [
+    var clipRect = [
         {x: -hideFieldSize, y: -hideFieldSize},
         {x: -hideFieldSize + 5, y:  hideFieldSize},
         {x:  hideFieldSize, y:  hideFieldSize + 5},
         {x:  hideFieldSize + 5, y: -hideFieldSize + 5}
     ];
+    var length = controlMap.length;
     for (var i = 0; i < length - 1; i += 2) {
         var p1 = controlMap[i];
         var p2 = controlMap[i + 1];
-        algorithm(p, p1, p2);
+        algorithm(clipRect, p1, p2);
     }
     context.fillStyle = POINT_COLOR;
-    drawBrez(get2PointMap(p[0], p[1]));
-    drawBrez(get2PointMap(p[1], p[2]));
-    drawBrez(get2PointMap(p[2], p[3]));
-    drawBrez(get2PointMap(p[3], p[0]));
+    drawBrez(get2PointMap(clipRect[0], clipRect[1]));
+    drawBrez(get2PointMap(clipRect[1], clipRect[2]));
+    drawBrez(get2PointMap(clipRect[2], clipRect[3]));
+    drawBrez(get2PointMap(clipRect[3], clipRect[0]));
     drawAllPoints();
 }
 

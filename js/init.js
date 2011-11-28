@@ -40,7 +40,8 @@ var LAB_MODE = {
     BSPLINE: "BSPLINE",
     CUBE: "CUBE",
     FILL_AREA: "FILL_AREA",
-    HIDE_LINES: "HIDE_LINES"
+    HIDE_LINES: "HIDE_LINES",
+    HIDE_LINES_CYRUS: "HIDE_LINES_CYRUS"
 };
 
 var mode = MODE.MAIN;
@@ -167,6 +168,8 @@ function initEvents() {
                 clearStandartMap();
                 if (labMode == LAB_MODE.HIDE_LINES) {
                     drawHideLines();
+                } else if (labMode == LAB_MODE.HIDE_LINES_CYRUS) {
+                    drawHideLinesCyrus();
                 } else if (labMode == LAB_MODE.FILL_AREA) {
                     stopThread = true;
                     paintArea();
