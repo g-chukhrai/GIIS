@@ -158,8 +158,10 @@ function getStartPyramidCords() {
 
 function drawFigure() {
     vertexes2d = [];
-    canvasStep = CUBE_CANVAS_STEP;
-    clearCanvas();
+    if (labMode != LAB_MODE.HIDE_LINES_CYRUS) {
+        canvasStep = CUBE_CANVAS_STEP;
+        clearCanvas();
+    }
     //Установка индикатора необходимости скрытия невидимых граней
     var hidePlanes = hidePlanesCheckBox.prop('checked');
     var visibleVector = hidePlanes ? checkPlanes() : null;
@@ -179,7 +181,9 @@ function drawFigure() {
         }
     }
     context.stroke(); //Выключить режим отрисовки
-    printVertexes();
+    if (labMode != LAB_MODE.HIDE_LINES_CYRUS) {
+        printVertexes();
+    }
 }
 
 function make2DProjection() {
@@ -194,6 +198,15 @@ function make2DProjection() {
 
         vertexes2d.push({'x' : Math.round(x2d), 'y' : Math.round(y2d)});
     }
+}
+
+function make2DProjection2Points(p1, p2) {
+    //расчет видовых координат точек
+    var p1x2d = projMatrix[0][0] * p1.x + projMatrix[1][0] * p1.y + 1;
+    var p1y2d = projMatrix[0][1] * p1.x + projMatrix[1][1] * p1.y + projMatrix[2][1] * p1.z + 1;
+    var p2x2d = projMatrix[0][0] * p2.x + projMatrix[1][0] * p2.y + 1;
+    var p2y2d = projMatrix[0][1] * p2.x + projMatrix[1][1] * p2.y + projMatrix[2][1] * p2.z + 1;
+    return get2PointMap({x : p1x2d, y : p1y2d}, {x:p2x2d,y:p2y2d});
 }
 
 //Функция нахождения центра фигуры
@@ -322,7 +335,7 @@ function printVertexes() {
             var v = vertexes[i];
             var pv = prevVertexes[i];
             appendRow("td", 6, Math.round(pv[0]), Math.round(pv[1]), Math.round(pv[2]),
-                    Math.round(v[0]), Math.round(v[1]), Math.round(v[2]));
+                Math.round(v[0]), Math.round(v[1]), Math.round(v[2]));
         }
     } else {
         appendRow("th", 3, '', 'Curr', '');
@@ -337,7 +350,7 @@ function printVertexes() {
 //Функция, инициирующая начало работы с фигурой
 function drawStartFigure(figure) {
     setLabMode(LAB_MODE.CUBE);
-    figure == FIGURE.CUBE ?  getStartCubeCords() : getStartPyramidCords();
+    figure == FIGURE.CUBE ? getStartCubeCords() : getStartPyramidCords();
     canvasStep = CUBE_CANVAS_STEP;
 //    drawFigure();
     rotateCube(ROTATION.X, false);

@@ -93,6 +93,14 @@ function drawRandomCyrus() {
     drawHideLinesCyrus();
 }
 
+function drawRandomCyrus3D() {
+    setLabMode(LAB_MODE.HIDE_LINES_CYRUS);
+    hideFieldSize = parseInt($("#fieldSize").val());
+    hideLinesCount = parseInt($("#linesCount").val());
+    getRandomPoints(1 * 2);
+    drawHideLinesCyrus3D();
+}
+
 function drawHideLines() {
     var length = controlMap.length;
     for (var i = 0; i < length - 1; i += 2) {
@@ -133,6 +141,18 @@ function drawHideLinesCyrus() {
     drawBrez(get2PointMap(clipRect[2], clipRect[3]));
     drawBrez(get2PointMap(clipRect[3], clipRect[0]));
     drawAllPoints();
+}
+
+function drawHideLinesCyrus3D() {
+    getStartCubeCords();
+    var length = controlMap.length;
+    for (var i = 0; i < length - 1; i += 2) {
+        var p1 = controlMap[i];
+        var p2 = controlMap[i + 1];
+        algorithm3D(p1, p2);
+    }
+    context.fillStyle = POINT_COLOR;
+    drawFigure();
 }
 
 function classify(p) {
@@ -186,43 +206,35 @@ function drawClippedLine(p1, p2) {
     var m = dy / dx;
     var p = [];
     if (isPointInsideClipRect(p1)) {
-//        console.log("p1: " + p1.x + ":" + p1.y + " in clip");
         p.push(p1);
     }
     if (isPointInsideClipRect(p2)) {
-//        console.log("p2: " + p2.x + ":" + p2.y + " in clip");
         p.push(p2);
     }
 
     var yLeft = m * (-hideFieldSize - p1.x) + p1.y;
     var left = {x:  -hideFieldSize, y : Math.floor(yLeft) };
-//    printPoint(left, "left");
     if (( left.x >= p1.x || left.x >= p2.x ) && isPointInsideClipRect(left))
         p.push(left);
 
     var yRight = m * (hideFieldSize - p1.x) + p1.y;
     var right = {x: hideFieldSize, y : Math.floor(yRight)};
-//    printPoint(right, "right");
     if (( right.x <= p1.x || right.x <= p2.x ) && isPointInsideClipRect(right))
         p.push(right);
 
     var xDown = p1.x + (-hideFieldSize - p1.y ) / m;
     var down = {x: Math.floor(xDown) , y :  -hideFieldSize };
-//    printPoint(down, "down");
     if (( down.y >= p1.y || down.y >= p2.y ) && isPointInsideClipRect(down))
         p.push(down);
 
     var xUp = p1.x + ( hideFieldSize - p1.y ) / m;
     var up = {x: Math.floor(xUp), y : hideFieldSize };
-//    printPoint(up, "up");
     if (( up.y <= p1.y || up.y <= p2.y ) && isPointInsideClipRect(up))
         p.push(up);
 
     if (p.length > 1) {
         p1 = {x:p[0].x, y: p[0].y};
         p2 = {x:p[1].x, y: p[1].y};
-//        printPoint(p1, "p1");
-//        printPoint(p2, "p2");
         drawBrez(get2PointMap(p1, p2));
     }
 }
@@ -269,13 +281,69 @@ function algorithm(p, p1, p2) {
         }
         i++;
     }
-    console.log("init: (" + t1 + ";" + t2 + ")");
+//    console.log("init: (" + t1 + ";" + t2 + ")");
     if (t1 <= t2 && t1 >= 0 && t2 <= 1) {
         var p11 = {x: Math.round(p1.x + t1 * dirV.x), y: Math.round(p1.y + t1 * dirV.y)};
         var p22 = {x: Math.round(p1.x + t2 * dirV.x),y: Math.round(p1.y + t2 * dirV.y)};
         context.fillStyle = CORAL;
         drawBrez(get2PointMap(p11, p22));
-        console.log("init: (" + p1.x + ";" + p1.y + ")-(" + p2.x + ";" + p2.y + ")" + " res: (" + p11.x + ";" + p11.y + ")-(" + p22.x + ";" + p22.y + ")");
+//        console.log("init: (" + p1.x + ";" + p1.y + ")-(" + p2.x + ";" + p2.y + ")" + " res: (" + p11.x + ";" + p11.y + ")-(" + p22.x + ";" + p22.y + ")");
+    } else {
+        visible = false;
+    }
+}
+
+function algorithm3D(p1, p2) {
+    // calculate normals
+    context.fillStyle = WHITE_SMOKE;
+
+    drawBrez(make2DProjection2Points(p1, p2));
+    var normals = new Array(planes.length);
+    $.each(planes, function(i, val) {
+        var normal = getNormal(val);
+        var koef = 1;
+        normals[i] = {x:normal[0]/koef,y:normal[1]/koef,z:normal[2]/koef};
+    });
+    var t1 = 0;
+    var t2 = 1;
+
+    // compute the direction vector
+    var dirV = {x : p2.x - p1.x, y : p2.y - p1.y, z: p2.z - p1.z};
+    var visible = true;
+    var i = 0;
+    while (i < planes.length && visible) {
+
+        var vertex = vertexes[planes[i][0]];
+        var q0 = {x: p1.x - vertex[0], y: p1.y - vertex[1], z: p1.z - vertex[2]};
+        var qi = dotProduct3D(normals[i], q0);
+        var pi = dotProduct3D(normals[i], dirV);
+
+        if (pi == 0) {
+            if (qi > 0) {
+                visible = false;
+            }
+        } else {
+            var t = -(qi / pi);
+            if (pi < 0) {       // entering
+                if (t > t1) {
+                    t1 = t;
+                }
+            } else {
+                if (t < t2) {   // exiting
+                    t2 = t;
+                }
+            }
+        }
+        i++;
+    }
+    console.log("init: (" + t1 + ";" + t2 + ")");
+    if (t1 <= t2 && t1 >= 0 && t2 <= 1) {
+        var p11 = {x: Math.round(p1.x + t1 * dirV.x), y: Math.round(p1.y + t1 * dirV.y), z: Math.round(p1.z + t1 * dirV.z)};
+        var p22 = {x: Math.round(p1.x + t2 * dirV.x), y: Math.round(p1.y + t2 * dirV.y), z: Math.round(p1.z + t2 * dirV.z)};
+        context.fillStyle = CORAL;
+        drawBrez(make2DProjection2Points(p11, p22));
+        console.log("init: (" + p1.x + ";" + p1.y + ";" + p1.z + ")-(" + p2.x + ";" + p2.y + ";" + p2.z + ")" +
+            " res: (" + p11.x + ";" + p11.y + ";" + p11.z + ")-(" + p22.x + ";" + p22.y + ";" + p22.z + ")");
     } else {
         visible = false;
     }
@@ -299,4 +367,8 @@ function getNormals(p) {
 
 function dotProduct(v1, v2) {
     return v1.x * v2.x + v1.y * v2.y;
+}
+
+function dotProduct3D(v1, v2) {
+    return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 }

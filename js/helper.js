@@ -1,6 +1,6 @@
-﻿function addToMap(x, y, isState) {
-    if (arguments.length == 3) {
-        controlMap.push({'x' : x, 'y' : y, 'z' : 1});
+﻿function addToMap(x, y, z, isState) {
+    if (arguments.length == 4) {
+        controlMap.push({'x' : x, 'y' : y, 'z' : z});
     } else {
         map.push({'x' : x, 'y' : y, 'z' : 1});
 		if (pixelMatrix != null) pixelMatrix[x+HALF_PIXEL_COUNT][y+HALF_PIXEL_COUNT] = 1;
@@ -116,7 +116,7 @@ function getRandomPoints(count) {
     var limit = (halfWidth / canvasStep) - 10;
 
     for (var i = 0; i < count; i++) {
-        addToMap(Math.rand(-limit, limit), Math.rand(-limit, limit), true);
+        addToMap(Math.rand(-limit, limit), Math.rand(-limit, limit),Math.rand(-limit, limit), true);
     }
     if (labMode != LAB_MODE.HIDE_LINES && labMode != LAB_MODE.HIDE_LINES_CYRUS) {
         drawAllPoints();
