@@ -72,7 +72,7 @@ function getFigureCenter() {
 function paintField() {
     context.fillStyle = POINT_COLOR;
     drawBrez({x1 : -hideFieldSize, y1 : -hideFieldSize, x2: -hideFieldSize, y2: hideFieldSize});
-    drawBrez({x1 : -hideFieldSize, y1 : hideFieldSize, x2: hideFieldSize, y2: hideFieldSize});
+    drawBrez({x1 : -hideFieldSize , y1 : hideFieldSize, x2: hideFieldSize, y2: hideFieldSize });
     drawBrez({x1 : hideFieldSize, y1 : hideFieldSize, x2: hideFieldSize, y2: -hideFieldSize});
     drawBrez({x1 : hideFieldSize, y1 : -hideFieldSize, x2: -hideFieldSize, y2: -hideFieldSize});
 }
@@ -85,6 +85,12 @@ function drawRandomLines() {
     drawHideLines();
 }
 
+function drawRandomCyrus() {
+    setLabMode(LAB_MODE.HIDE_LINES);
+    getRandomPoints(2);
+    drawHideLinesCyrus();
+}
+
 function drawHideLines() {
     var length = controlMap.length;
     for (var i = 0; i < length - 1; i += 2) {
@@ -92,20 +98,38 @@ function drawHideLines() {
         var p2 = controlMap[i + 1];
         var isClipped = false;
         if (isTrivialVisible(p1, p2)) {
-            clipCB("isTrivialVisible", p1, p2);
             context.fillStyle = CORAL;
         } else if (isTrivialInvisible(p1, p2)) {
-            clipCB("isTrivialInvisible", p1, p2);
             context.fillStyle = WHITE_SMOKE;
         } else {
-            clipCB("isClipped", p1, p2);
             isClipped = true;
             drawClippedLine(p1, p2);
-            context.fillStyle = WHITE_SMOKE
+            context.fillStyle = WHITE_SMOKE;
         }
         drawBrez(get2PointMap(p1, p2), isClipped);
     }
     paintField();
+    drawAllPoints();
+}
+
+function drawHideLinesCyrus() {
+    var length = controlMap.length;
+    var p = [
+        {x: -hideFieldSize, y: -hideFieldSize},
+        {x: -hideFieldSize + 5, y:  hideFieldSize},
+        {x:  hideFieldSize, y:  hideFieldSize + 5},
+        {x:  hideFieldSize + 5, y: -hideFieldSize + 5}
+    ];
+    for (var i = 0; i < length - 1; i += 2) {
+        var p1 = controlMap[i];
+        var p2 = controlMap[i + 1];
+        algorithm(p, p1, p2);
+    }
+    context.fillStyle = POINT_COLOR;
+    drawBrez(get2PointMap(p[0], p[1]));
+    drawBrez(get2PointMap(p[1], p[2]));
+    drawBrez(get2PointMap(p[2], p[3]));
+    drawBrez(get2PointMap(p[3], p[0]));
     drawAllPoints();
 }
 
@@ -168,7 +192,6 @@ function drawClippedLine(p1, p2) {
         p.push(p2);
     }
 
-
     var yLeft = m * (-hideFieldSize - p1.x) + p1.y;
     var left = {x:  -hideFieldSize, y : Math.floor(yLeft) };
 //    printPoint(left, "left");
@@ -202,40 +225,76 @@ function drawClippedLine(p1, p2) {
     }
 }
 
-function clipCB(ann, p1, p2) {
+function algorithm(p, p1, p2) {
+    // calculate normals
+    context.fillStyle = WHITE_SMOKE;
+    drawBrez(get2PointMap(p1, p2));
+    var normals = getNormals(p);
 
-    var dx = p2.x - p1.x;
-    var dy = p2.y - p1.y;
+    // start largest at smallest legal value and smallest
+    // at largest legal value
+    var t1 = 0;
+    var t2 = 1;
 
-    var t1 = p1.x / dx;
-    var t2 = p1.y / dx;
-    var t3 = (p1.y - hideFieldSize) / dy;
-    var t4 = (p1.x - hideFieldSize) / dx;
+    // compute the direction vector
+    var dirV = {x : p2.x - p1.x, y : p2.y - p1.y};
+    var visible = true;
+    var i = 0;
+    while (i < p.length && visible) {
 
-    var tempStartX=0;
-    var tempStartY=0;
-    if (t1 > 0 && t1 < 1) {
-        tempStartX = (p1.x + t1 * dx);
-        tempStartY = (p1.y + t1 * dy);
-    } else if (t2 > 0 && t2 < 1) {
-        tempStartX = (p1.x + t2 * dx);
-        tempStartY = (p1.y + t2 * dy);
+        var q0 = {x: p1.x - p[i].x, y: p1.y - p[i].y};
+        var qi = dotProduct(normals[i], q0);
+        var pi = dotProduct(normals[i], dirV);
+
+        if (pi == 0) {          // Parallel or Point
+            // parallel - if outside then forget the line; if inside then there are no
+            // intersections with this side
+            // but there may be with other edges, so in this case just keep going
+            if (qi > 0) {
+                visible = false;   //   Parallel and outside or point (p1 == p2) and outside
+            }
+        } else {
+            var t = -(qi / pi);
+            if (pi < 0) {       // entering
+                if (t > t1) {
+                    t1 = t;
+                }
+            } else {
+                if (t < t2) {   // exiting
+                    t2 = t;
+                }
+            }
+        }
+        i++;
     }
-
-    var tempEndX=0;
-    var tempEndY=0;
-    if (t3 > 0 && t3 < 1) {
-        tempEndX = (p1.x - t3 * dx);
-        tempEndY = (p1.y - t3 * dy);
-    } else if (t4 > 0 && t4 < 1) {
-        tempEndX = (p1.x - t4 * dx);
-        tempEndY = (p1.y - t4 * dy);
+    console.log("init: (" + t1 + ";" + t2 + ")");
+    if (t1 <= t2 && t1 >= 0 && t2 <= 1) {
+        var p11 = {x: Math.round(p1.x + t1 * dirV.x), y: Math.round(p1.y + t1 * dirV.y)};
+        var p22 = {x: Math.round(p1.x + t2 * dirV.x),y: Math.round(p1.y + t2 * dirV.y)};
+        context.fillStyle = CORAL;
+        drawBrez(get2PointMap(p11, p22));
+        console.log("init: (" + p1.x + ";" + p1.y + ")-(" + p2.x + ";" + p2.y + ")" + " res: (" + p11.x + ";" + p11.y + ")-(" + p22.x + ";" + p22.y + ")");
+    } else {
+        visible = false;
     }
-
-    var p11 = {x:Math.round(tempStartX),y:Math.round(tempStartY)};
-    var p22 = {x:Math.round(tempEndX),y:Math.round(tempEndY)};
-    console.log(ann + " init: (" + p1.x + ";" + p1.y + ")-(" + p2.x + ";" + p2.y + ")" + " res: (" + p11.x + ";" + p11.y + ")-(" + p22.x + ";" + p22.y + ")");
-
-    return [p11,p22];
 }
 
+function getNormals(p) {
+    var normals = new Array(4);
+    var lastPoint = p.length;
+    for (var i = 0; i < lastPoint; i++) {
+        var j = (i + 1) % lastPoint;
+        var k = (i + 2) % lastPoint;
+        // make vector be -1/mI + 1J
+        var p1 = {x : -(p[j].y - p[i].y) / (p[j].x - p[i].x), y:  1};
+        var v1 = {x : p[k].x - p[i].x, y : p[k].y - p[i].y};
+        // inner normal
+        var koef = dotProduct(p1, v1) > 0 ? -1 : 1;
+        normals[i] = {x : koef * p1.x, y : koef};
+    }
+    return normals;
+}
+
+function dotProduct(v1, v2) {
+    return v1.x * v2.x + v1.y * v2.y;
+}
