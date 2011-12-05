@@ -118,14 +118,14 @@ function rotate(pointMatrix, angle, direction) {
 function getStartCubeCords() {
     prevVertexes = null;
     vertexes = [
-        [-CS, -CS, -CS, 1],
-        [CS, -CS, -CS, 1],
-        [CS, CS, -CS, 1],
-        [-CS, CS, -CS, 1],
-        [-CS, -CS, CS, 1],
-        [CS, -CS, CS, 1],
-        [CS, CS, CS, 1],
-        [-CS, CS, CS, 1]
+        [-CS, -CS, -CS-100, 1],
+        [CS, -CS, -CS-100, 1],
+        [CS, CS, -CS-100, 1],
+        [-CS, CS, -CS-100, 1],
+        [-CS, -CS, CS-100, 1],
+        [CS, -CS, CS-100, 1],
+        [CS, CS, CS-100, 1],
+        [-CS, CS, CS-100, 1]
     ];
 
     planes = [
@@ -164,19 +164,44 @@ function drawFigure() {
     }
     //Установка индикатора необходимости скрытия невидимых граней
     var hidePlanes = hidePlanesCheckBox.prop('checked');
+	var isPerspective = perspectiveCheckBox.prop('checked');
     var visibleVector = hidePlanes ? checkPlanes() : null;
-    make2DProjection();
-    map = vertexes2d;
-    context.strokeStyle = LINE_COLOR; //Установка цвета линии
+	
+	context.strokeStyle = LINE_COLOR; //Установка цвета линии
     context.beginPath();  //Включить режим отрисовки
     for (var i = 0; i < planes.length; i++) {
-        if (!hidePlanes || visibleVector[i]) {
-            var lastIndex = planes[i].length - 1;
-            for (var j = 0; j < lastIndex + 1; j++) {
-                var v1 = vertexes2d[planes[i][j]];
-                var v2 = vertexes2d[planes[i][j == lastIndex ? 0 : j + 1]];
-                context.moveTo(v1.x, v1.y);  //Установка инструмента рисования в начальную точку
-                context.lineTo(v2.x, v2.y); //Отрисовка ребра
+        if (!hidePlanes || visibleVector[i]){
+            var plane = planes[i];
+            var length = plane.length;
+            for (var j = 0; j < length; j++) {
+				var v1_index = plane[j];
+				var v2_index = plane[j == length - 1 ? 0 : j + 1];
+                var v1 = vertexes[v1_index];
+                var v2 = vertexes[v2_index];
+								
+				var x1 = v1[0];
+				var x2 = v2[0];
+				var y1 = v1[1];
+				var y2 = v2[1];
+
+				if (isPerspective) {
+					var d = parseInt($("#d").val());
+					d = -d;
+					var z1 = v1[2];
+					var z2 = v2[2];
+					if (d < z1) z1 = d;
+					if (d < z2) z2 = d;
+					x1 *= d / (z1) ;
+					y1 *= d / (z1) ;
+					z1 = d;
+				
+					x2 *= d / (z2) ;
+					y2 *= d / (z2) ;
+					z2 = d;
+				}
+		
+				context.moveTo(x1, y1);  //Установка инструмента рисования в начальную точку
+                context.lineTo(x2, y2); //Отрисовка ребра
             }
         }
     }

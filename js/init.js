@@ -87,7 +87,8 @@ function initJQueryComponents() {
     $('#linesCount').spinner({ min: 1, max: 50 , step: 1 });
     showInfoCheckBox = $('input[name="showInfo"]');
     hidePlanesCheckBox = $('input[name="hidePlanes"]');
-
+	perspectiveCheckBox = $('input[name="perspective"]');
+	
     $('#accordion').accordion();
 
     $("#mover").draggable({
