@@ -118,14 +118,14 @@ function rotate(pointMatrix, angle, direction) {
 function getStartCubeCords() {
     prevVertexes = null;
     vertexes = [
-        [-CS, -CS, -CS-100, 1],
-        [CS, -CS, -CS-100, 1],
-        [CS, CS, -CS-100, 1],
-        [-CS, CS, -CS-100, 1],
-        [-CS, -CS, CS-100, 1],
-        [CS, -CS, CS-100, 1],
-        [CS, CS, CS-100, 1],
-        [-CS, CS, CS-100, 1]
+        [-CS, -CS, -CS, 1],
+        [CS, -CS, -CS, 1],
+        [CS, CS, -CS, 1],
+        [-CS, CS, -CS, 1],
+        [-CS, -CS, CS, 1],
+        [CS, -CS, CS, 1],
+        [CS, CS, CS, 1],
+        [-CS, CS, CS, 1]
     ];
 
     planes = [
@@ -162,6 +162,7 @@ function drawFigure() {
         canvasStep = CUBE_CANVAS_STEP;
         clearCanvas();
     }
+	
     //Установка индикатора необходимости скрытия невидимых граней
     var hidePlanes = hidePlanesCheckBox.prop('checked');
 	var isPerspective = perspectiveCheckBox.prop('checked');
@@ -209,6 +210,20 @@ function drawFigure() {
     if (labMode != LAB_MODE.HIDE_LINES_CYRUS) {
         printVertexes();
     }
+}
+
+var tempIsVisible;
+function debugPoints(p1, p2) {
+	tempIsVisible = isVisible;
+    isVisible = false;
+	var pmax = (p1.z > p2.z ? p1.z : p2.z);
+	$.each(vertexes, function(i, val) {
+		if (val[2] > pmax && tempIsVisible) {
+			isVisible = true;
+			//console.log("yes");
+		}
+	});
+	
 }
 
 function make2DProjection() {

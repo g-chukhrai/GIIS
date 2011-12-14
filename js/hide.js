@@ -1,8 +1,9 @@
-var hideFieldSize;
+﻿var hideFieldSize;
 var hideLinesCount;
 var VIEW_VECTOR = [
     [0, 0, 1, 0]
 ];
+var isVisible;
 
 function checkPlanes() {
     var planesCount = planes.length;
@@ -31,6 +32,214 @@ function checkPlanes() {
     return visibleVector;
 }
 
+function getPt(p1, p2, t) {
+	var x1 = p1.x;
+	var x2 = p2.x;
+	var y1 = p1.y;
+	var y2 = p2.y;
+	var z1 = p1.z;
+	var z2 = p2.z;
+	
+	var x = x1 + t*(x2-x1);
+	var y = y1 + t*(y2-y1);
+	var z = z1 + t*(z2-z1);
+	return {x:x, y:y, z:z};
+}
+
+//Функция получения случайной точки на грани (plane) фигуры 
+function getRandomPlanePoint(plane) {
+	var p1_index = plane[0];
+	var p2_index = plane[2];
+	var p1 = vertexes[p1_index];
+	var p2 = vertexes[p2_index];
+	
+	var diagonal_x = (p1[0]+p2[0])/2;
+	var diagonal_y = (p1[1]+p2[1])/2;
+	var diagonal_z = (p1[2]+p2[2])/2;
+	
+	return {x:diagonal_x, y:diagonal_y, z:diagonal_z};
+}
+
+
+//Функция вычитания векторов
+function vectorDifference(p1, p2) {
+	var x = p1.x - p2.x;
+	var y = p1.y - p2.y;
+	var z = p1.z - p2.z;
+	return {x:x, y:y, z:z};
+}
+
+//Функция деления векторов
+function vectorDivision(v1, v2) {
+    return v1.x / v2.x + v1.y / v2.y + v1.z / v2.z;
+}
+
+//Функция умножения векторов
+function vectorMultiplication(v1, v2) {
+    return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+}
+
+//Функция отсечения линии, заданной точками p1, p2
+function newAlgorithm3D(p1, p2) {
+	var dirV = {x : p2.x - p1.x, y : p2.y - p1.y}; //длина линии
+	context.fillStyle = POINT_COLOR;  //установка цвета линии
+    drawFigure(); //отрисовка 3-хмерной фигуры, грани которой заданы в массиве planes
+	
+    context.strokeStyle = CORAL;//установка цвета линии
+	//Отрисовка линии
+	context.beginPath();
+	context.moveTo(p1.x, p1.y);
+	context.lineTo(p2.x, p2.y);
+	context.stroke();
+
+	var tEntering = []; //массив "потенциально входящих в фигуру" t
+	var tLeaving = []; //массив "потенциально выходящих из фигуры" t
+	//Нахождение t для каждой грани фигуры
+    $.each(planes, function(i, val) {
+        var normal = getNormal(val); //нахождение нормали грани
+		var P = getRandomPlanePoint(val); //нахождение случайной точки, расположенной на грани
+		//Создание объекта типа map, содержащего значения координат нормали грани
+		var N = normal; 
+		N = {x:N[0], y:N[1], z:N[2]}; 
+		/*
+		if (normal[3] < 0)   {
+		N = {x:-N[0], y:-N[1], z:-N[2]}; 
+		}
+		*/
+		//Вычисление t  =  -  N * (p0  -  P)  /  N * (p1 - p0)  
+		var firstVectorDif = vectorDifference(p1, P); //(p0  -  P)
+		var secondVectorDif = vectorDifference(p2, p1); //(p1 - p0)
+		var firstProduct = vectorMultiplication(N, firstVectorDif); // N * (p0  -  P)
+		var firstDivisioner = firstProduct; 
+		var secondDivisioner = vectorMultiplication(N, secondVectorDif); //N * (p1 - p0)
+
+		var t = -(firstDivisioner/secondDivisioner) ;
+	
+		if (normal[3] < 0)   {
+			secondDivisioner = -secondDivisioner;
+			firstDivisioner = -firstDivisioner;
+		}
+	
+		
+		//Если 	N * (p1 - p0) < 0 добавление t в группу "потенциально входящих в фигуру" значений t
+		//Иначе в группу "потенциально выходящих из фигуры" значений t
+		if (t != Infinity && t != -Infinity) {
+		if (secondDivisioner < 0) {
+			 tEntering.push(t);
+		}
+		else {
+			tLeaving.push(t);
+		}
+		}
+		
+    });
+	/*
+	var tNotInf = [];
+	for (var i = 0; i < t_array.length; i++) {
+		if (t_array[i] != Infinity && t_array[i] != -Infinity) {
+			tNotInf.push(t_array[i]);
+		}
+	}
+	tNotInf = tNotInf.sort();
+	*/
+	tEntering = tEntering.sort(); //сортировка значений t по возрастанию
+	tLeaving = tLeaving.sort(); //сортировка значений t по возрастанию
+	var tPE = tEntering[0] //получение значения tвх
+	var tPL = tLeaving[tLeaving.length - 1]; //получение значения tвых
+	//console.log("tPE: "+tPE+" tPL: "+tPL);
+	
+	var t1 = tPL;
+	var t2 = tPE;
+	//Проверка условия видимости линии
+	isVisible = false;
+	if (t1 < t2 && t1 >= 0 && t2 <= 1) isVisible = true;
+	debugPoints(p1, p2);
+	
+	if (isVisible) {
+		var p11 = {x: Math.round(p1.x + t1 * dirV.x), y: Math.round(p1.y + t1 * dirV.y)}; //точка начала видимой части
+        var p22 = {x: Math.round(p1.x + t2 * dirV.x),y: Math.round(p1.y + t2 * dirV.y)}; //точка конца видимой части
+		//Отрисовка видимой части линии
+        context.strokeStyle = LINE_COLOR;
+		context.beginPath();
+		context.moveTo(p11.x, p11.y);
+		context.lineTo(p22.x, p22.y);
+		context.stroke();
+		//console.log("ok");
+    } 
+	
+}
+
+
+
+function makePointPerspective(point) {
+	d = 100;
+	var x1 =  point.x*d / (point.z == 0 ? 1 : point.z) ;
+	var y1 = point.y*d / (point.z == 0 ? 1 : point.z)  ;
+	var z1 = d;
+	
+	return {x:x1, y:y1, z:z1};
+
+}
+
+function reDrawHideLinesCyrus3D() {
+	
+    var length = controlMap.length
+	var tempCM = controlMap;
+	clearCanvas();
+	controlMap = tempCM;
+	
+    for (var i = 0; i < length - 1; i += 2) {
+        var p1 = controlMap[i];
+        var p2 = controlMap[i + 1];
+        newAlgorithm3D(p1, p2);
+    }
+	/*
+	p2 = {x:5, y:-70, z:0};
+	p1 = {x:-5, y:117, z:0};
+	
+	newAlgorithm3D(p1, p2);
+	printVertexes();
+	*/
+}
+
+function drawHideLinesCyrus3D() {
+    getStartCubeCords();
+    var length = controlMap.length;
+	
+	
+    for (var i = 0; i < length - 1; i += 2) {
+        var p1 = controlMap[i];
+		//p1 = {x: p1.x, y: -p1.y, z: p1.z};
+        var p2 = controlMap[i + 1];
+		//p2 = {x: p2.x, y: -p2.y, z: p2.z};
+        newAlgorithm3D(p1, p2);
+    }
+	printVertexes();
+	printLines();
+	
+	/*
+	p2 = {x:5, y:-70, z:0};
+	p1 = {x:-5, y:117, z:0};
+	
+	newAlgorithm3D(p1, p2);
+	*/
+}
+
+function getRandomPointsNew(count) {
+    if (arguments.length == 0) count = 4;
+    clearCanvas();
+    resetScale();
+    var limit = 300;
+
+    for (var i = 0; i < count; i++) {
+        addToMap(Math.rand(-limit, limit), Math.rand(-limit/2, limit/2), Math.rand(-50, 50), true);
+    }
+    if (labMode != LAB_MODE.HIDE_LINES && labMode != LAB_MODE.HIDE_LINES_CYRUS) {
+        drawAllPoints();
+    }
+}
+
+//Функция получения нормали грани фигуры
 function getNormal(plane) {
     var p1 = vertexes[plane[0]];
     var p2 = vertexes[plane[1]];
@@ -97,8 +306,21 @@ function drawRandomCyrus3D() {
     setLabMode(LAB_MODE.HIDE_LINES_CYRUS);
     hideFieldSize = parseInt($("#fieldSize").val());
     hideLinesCount = parseInt($("#linesCount").val());
-    getRandomPoints(1 * 2);
+    getRandomPointsNew(hideLinesCount*2);
     drawHideLinesCyrus3D();
+}
+
+
+
+function printLines() {
+    var count = controlMap.length;
+
+        appendRow("th", 3, 'x', 'y', 'z');
+        for (var i = 0; i < count; i++) {
+            var v = controlMap[i];
+            appendRow("td", 3, Math.round(v.x), Math.round(v.y), Math.round(v.z));
+        }
+
 }
 
 function drawHideLines() {
@@ -143,17 +365,7 @@ function drawHideLinesCyrus() {
     drawAllPoints();
 }
 
-function drawHideLinesCyrus3D() {
-    getStartCubeCords();
-    var length = controlMap.length;
-    for (var i = 0; i < length - 1; i += 2) {
-        var p1 = controlMap[i];
-        var p2 = controlMap[i + 1];
-        algorithm3D(p1, p2);
-    }
-    context.fillStyle = POINT_COLOR;
-    drawFigure();
-}
+
 
 function classify(p) {
     if (p.x < -hideFieldSize) {
@@ -336,14 +548,13 @@ function algorithm3D(p1, p2) {
         }
         i++;
     }
-    console.log("init: (" + t1 + ";" + t2 + ")");
+    //console.log("init: (" + t1 + ";" + t2 + ")");
     if (t1 <= t2 && t1 >= 0 && t2 <= 1) {
         var p11 = {x: Math.round(p1.x + t1 * dirV.x), y: Math.round(p1.y + t1 * dirV.y), z: Math.round(p1.z + t1 * dirV.z)};
         var p22 = {x: Math.round(p1.x + t2 * dirV.x), y: Math.round(p1.y + t2 * dirV.y), z: Math.round(p1.z + t2 * dirV.z)};
         context.fillStyle = CORAL;
         drawBrez(make2DProjection2Points(p11, p22));
-        console.log("init: (" + p1.x + ";" + p1.y + ";" + p1.z + ")-(" + p2.x + ";" + p2.y + ";" + p2.z + ")" +
-            " res: (" + p11.x + ";" + p11.y + ";" + p11.z + ")-(" + p22.x + ";" + p22.y + ";" + p22.z + ")");
+        //console.log("init: (" + p1.x + ";" + p1.y + ";" + p1.z + ")-(" + p2.x + ";" + p2.y + ";" + p2.z + ")" +  " res: (" + p11.x + ";" + p11.y + ";" + p11.z + ")-(" + p22.x + ";" + p22.y + ";" + p22.z + ")");
     } else {
         visible = false;
     }
@@ -372,3 +583,4 @@ function dotProduct(v1, v2) {
 function dotProduct3D(v1, v2) {
     return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 }
+

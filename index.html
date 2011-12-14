@@ -142,11 +142,11 @@
 
             <div>
                 <button onclick="drawStartFigure(FIGURE.CUBE);" class="miniButton width_100">Draw cube</button>
-                <button onclick="drawStartFigure(FIGURE.PYRAMID);" class="miniButton width_100">Draw pyramid</button>
+                <!--button onclick="drawStartFigure(FIGURE.PYRAMID);" class="miniButton width_100">Draw pyramid</button-->
                 <br/>
                 <label>
-                   <!-- Hide invisible planes: <input type="checkbox" name="hidePlanes"> <br>-->
-					Perspective: <input type="checkbox" name="perspective">
+                    Hide invisible planes: <input type="checkbox" name="hidePlanes"> <br>
+					<!--Perspective: <input type="checkbox" name="perspective">-->
                 </label>
                 <br/>Rotation:<br/>
                 <button onclick="rotateCube(ROTATION.X,false)" class="miniButton width_20">x</button>
@@ -194,7 +194,7 @@
                 <button onclick="triangulationTest();" class="miniButton width_100">Test
                 </button>
                 <br>
-
+				
             </div>
 
             <h3>Lab 6</h3>
@@ -210,6 +210,23 @@
                 <br/><button onclick="drawRandomLines();" class="miniButton width_100">Generate lines</button>
                 <br/><button onclick="drawRandomCyrus();" class="miniButton width_100">2D Cyrus-Beck</button>
                 <br/><button onclick="drawRandomCyrus3D();" class="miniButton width_100">3D Cyrus-Beck</button>
+				                <br/>Rotation:<br/>
+                <button onclick="rotateCube(ROTATION.X,false); reDrawHideLinesCyrus3D();" class="miniButton width_20">x</button>
+                <button onclick="rotateCube(ROTATION.Y,false); reDrawHideLinesCyrus3D();" class="miniButton width_20">y</button>
+                <button onclick="rotateCube(ROTATION.Z,false); reDrawHideLinesCyrus3D();" class="miniButton width_20">z</button>
+                <br/>
+                <button onclick="rotateCube(ROTATION.X,true); reDrawHideLinesCyrus3D();" class="miniButton width_20">x</button>
+                <button onclick="rotateCube(ROTATION.Y,true); reDrawHideLinesCyrus3D();" class="miniButton width_20">y</button>
+                <button onclick="rotateCube(ROTATION.Z,true); reDrawHideLinesCyrus3D();" class="miniButton width_20">z</button>
+                <!--<br/>Translation:<br/>-->
+                <!--button onclick="translateCube(MOVE_STEP,0,0); reDrawHideLinesCyrus3D();" class="miniButton width_20">x</button-->
+                <!--button onclick="translateCube(0,MOVE_STEP,0); reDrawHideLinesCyrus3D();" class="miniButton width_20">y</button-->
+                <!--button onclick="translateCube(0,0,MOVE_STEP); reDrawHideLinesCyrus3D();" class="miniButton width_20">z</button-->
+                <br/>
+                <!--button onclick="translateCube(-MOVE_STEP,0,0); reDrawHideLinesCyrus3D();" class="miniButton width_20">x</button-->
+                <!--button onclick="translateCube(0,-MOVE_STEP,0); reDrawHideLinesCyrus3D();" class="miniButton width_20">y</button-->
+                <button onclick="translateCube(0,0,-MOVE_STEP); reDrawHideLinesCyrus3D();" class="miniButton width_20">Z-</button>
+                <br/>
             </div>
 
             <h3>Canvas Settings</h3>
