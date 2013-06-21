@@ -1,0 +1,33 @@
+body {
+    background: none repeat scroll 0 0 #FFFFFF;
+    color: #000000;
+}
+
+a {
+    color: #9999FF;
+}
+
+a:hover {
+    color: #9999CC;
+}
+
+.linksTooltip {
+    background-color: #660000;
+    border: 3px solid #993333;
+    color: #CCCCCC;
+    padding: 10px;
+}
+
+.inputsTooltip {
+    background-color: #444444;
+    border: 1px solid #000000;
+    color: #CCCCCC;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    padding: 4px;
+    width: 150px;
+}
+
+.inputsTooltip #tooltipTitle {
+    font-weight: bold;
+}

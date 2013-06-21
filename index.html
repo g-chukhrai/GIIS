@@ -1,0 +1,248 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>GIIS</title>
+
+    <script src="js/base/jquery-1.6.2.min.js"></script>
+    <script src="js/base/jquery-ui-1.8.16.custom.min.js"></script>
+    <script src="js/base/ui.spinner.min.js"></script>
+    <script src="js/init.js"></script>
+    <script src="js/drawing.js"></script>
+    <script src="js/helper.js"></script>
+    <script src="js/canvas.js"></script>
+    <script src="js/lines.js"></script>
+    <script src="js/curves.js"></script>
+    <script src="js/splines.js"></script>
+    <script src="js/transformation.js"></script>
+    <script src="js/hide.js"></script>
+    <script src="js/filling.js"></script>
+    <script src="js/triangulation.js"></script>
+
+    <link href="css/table.css" rel="stylesheet"/>
+    <link href="css/button.css" rel="stylesheet"/>
+    <link href="css/main.css" rel="stylesheet"/>
+    <link href="css/jquery-ui-1.8.16.custom.css" rel="stylesheet"/>
+    <link href="css/ui.spinner.css" rel="stylesheet"/>
+    <link href="css/joystick.css" rel="stylesheet"/>
+    <link href="images/graphic.png" rel="icon">
+</head>
+<body>
+<div style="margin:30px; text-align:center;">
+    <div style="float:left;">
+        <canvas height='600' width='800' id='canvas'>Refresh browser</canvas>
+        <br/>
+        <label id="info"></label>
+        <br/>
+        <button onclick="downScale()" title="Zoom Out" class="miniButton"><img src="images/zoom_out.png"/></button>
+        <button onclick="resetScale()" title="Change to default" class="miniButton"><img src="images/table.png"/>
+        </button>
+        <button onclick="upScale()" title="Zoom In" class="miniButton"><img src="images/zoom_in.png"/></button>
+    </div>
+
+    <div style="float:left; margin-left:20px;max-width:360px;display: inline-block;">
+        <div id="accordion">
+
+            <h3>Lab 1</h3>
+
+            <div>
+                <label for="xPos">xPos:</label>
+                <input id="xPos" value="0" style="width: 40px" type="text"/>
+                <label for="yPos">yPos:</label>
+                <input id="yPos" value="0" style="width: 40px" type="text"/>
+                <button onclick="drawPoint()" class="miniButton width_100">point</button>
+                <br/> <br/>
+                <button onclick="drawCDA()" class="miniButton width_100">CDA</button>
+                <button onclick="draw2Points(); drawCDA();" class="miniButton width_100">Test</button>
+                <br/>
+                <button onclick="drawBrez()" class="miniButton width_100">Brezen</button>
+                <button onclick="draw2Points(); drawBrez();" class="miniButton width_100">Test</button>
+                <br/>
+                <button onclick="drawWu()" class="miniButton width_100">Wu</button>
+                <button onclick="draw2Points(); drawWu();" class="miniButton width_100">Test</button>
+            </div>
+
+            <h3>Lab 2</h3>
+
+            <div>
+                <table>
+                    <tr>
+                        <td>
+                            <label for="radius">radius:</label>
+                            <input id="radius" value="10" style="width: 40px" type="text"/>
+                        </td>
+                        <td>
+                            <button onclick="clearCanvas();drawCircle()" class="miniButton width_80">Circle</button>
+                        </td>
+                        <td>
+                            <button onclick="drawCircleRandom()" class="miniButton width_80">Test</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="koef">koef:</label>
+                            <input id="koef" value="10" style="width: 40px" type="text"/>
+                        </td>
+                        <td>
+                            <button onclick="clearCanvas();drawParabola()" class="miniButton width_80">Parabola</button>
+                        </td>
+                        <td>
+                            <button onclick="drawParabolaRandom()" class="miniButton width_80">Test</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="a">a:</label>
+                            <input id="a" value="20" style="width: 40px" type="text"/>
+                            <br/>
+                            <label for="b">b:</label>
+                            <input id="b" value="10" style="width: 40px" type="text"/>
+                        </td>
+                        <td>
+                            <button onclick="drawEllipse()" class="miniButton width_80">Ellipse</button>
+                        </td>
+                        <td>
+                            <button onclick="drawEllipseRandom()" class="miniButton width_80">Test</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <h3>Lab 3</h3>
+
+            <div>
+                <label>
+                    Show iteration table: <input type="checkbox" name="showInfo"/>
+                </label><br/>
+                <button onclick="setLabMode(LAB_MODE.HERMITE);drawAlgorithm(false);" class="miniButton width_100">
+                    Hermite
+                </button>
+                <button onclick="setLabMode(LAB_MODE.HERMITE);drawAlgorithm(true);" class="miniButton width_100">
+                    Test
+                </button>
+                <br/>
+
+                <button onclick="setLabMode(LAB_MODE.BREZIER);drawAlgorithm(false);" class="miniButton width_100">
+                    Brezier
+                </button>
+                <button onclick="setLabMode(LAB_MODE.BREZIER);drawAlgorithm(true);" class="miniButton width_100">
+                    Test
+                </button>
+                <br/>
+
+                <button onclick="setLabMode(LAB_MODE.BSPLINE);drawAlgorithm(false);" class="miniButton width_100">
+                    BSpline
+                </button>
+                <button onclick="setLabMode(LAB_MODE.BSPLINE);drawAlgorithm(true);" class="miniButton width_100">
+                    Test
+                </button>
+            </div>
+
+            <h3>Lab 4</h3>
+
+            <div>
+                <button onclick="drawStartFigure(FIGURE.CUBE);" class="miniButton width_100">Draw cube</button>
+                <!--button onclick="drawStartFigure(FIGURE.PYRAMID);" class="miniButton width_100">Draw pyramid</button-->
+                <br/>
+                <label>
+                    Hide invisible planes: <input type="checkbox" name="hidePlanes"> <br>
+					<!--Perspective: <input type="checkbox" name="perspective">-->
+                </label>
+                <br/>Rotation:<br/>
+                <button onclick="rotateCube(ROTATION.X,false)" class="miniButton width_20">x</button>
+                <button onclick="rotateCube(ROTATION.Y,false)" class="miniButton width_20">y</button>
+                <button onclick="rotateCube(ROTATION.Z,false)" class="miniButton width_20">z</button>
+                <br/>
+                <button onclick="rotateCube(ROTATION.X,true)" class="miniButton width_20">x</button>
+                <button onclick="rotateCube(ROTATION.Y,true)" class="miniButton width_20">y</button>
+                <button onclick="rotateCube(ROTATION.Z,true)" class="miniButton width_20">z</button>
+                <br/>Translation:<br/>
+                <button onclick="translateCube(MOVE_STEP,0,0)" class="miniButton width_20">x</button>
+                <button onclick="translateCube(0,MOVE_STEP,0)" class="miniButton width_20">y</button>
+                <button onclick="translateCube(0,0,MOVE_STEP)" class="miniButton width_20">z</button>
+                <br/>
+                <button onclick="translateCube(-MOVE_STEP,0,0)" class="miniButton width_20">x</button>
+                <button onclick="translateCube(0,-MOVE_STEP,0)" class="miniButton width_20">y</button>
+                <button onclick="translateCube(0,0,-MOVE_STEP)" class="miniButton width_20">z</button>
+                <br/>
+                <label for="d">d:</label>
+                <input id="d" value="5" style="width: 40px" type="text"/>
+               <!--< <button onclick="projectionCube()" class="miniButton width_100">Projection</button>-->
+                <!--<div id="joystick">-->
+                <!--<div id="mover"></div>-->
+                <!--</div>-->
+                <!--<div id="coords">&nbsp;</div>-->
+            </div>
+
+            <h3>Lab 5</h3>
+
+            <div>
+                <button onclick="setLabMode(LAB_MODE.FILL_AREA);paintArea();" class="miniButton width_100">Paint Area
+                </button>
+                <br>
+                <button onclick="setMode(MODE.ADD_SEED_PIXEL);" class="miniButton width_100">Add seed pixel</button>
+                <br>
+                <button onclick="simpleFilling();" class="miniButton width_100">Simple Filling</button>
+                <button onclick="stringFilling();" class="miniButton width_100">String Filling</button>
+
+            </div>
+            <h3>Lab 5 (Triangulation)</h3>
+
+            <div>
+                <button onclick="clearVertices(); triangulationOn();" class="miniButton width_100">Start
+                </button>
+                <button onclick="triangulationTest();" class="miniButton width_100">Test
+                </button>
+                <br>
+				
+            </div>
+
+            <h3>Lab 6</h3>
+
+            <div>
+                <label>
+                    Field:<input id="fieldSize" value="20" style="width: 40px" type="text"/>
+                </label>
+                <label>
+                    Lines:<input id="linesCount" value="5" style="width: 40px" type="text"/>
+                </label>
+                <br/>
+                <br/><button onclick="drawRandomLines();" class="miniButton width_100">Generate lines</button>
+                <br/><button onclick="drawRandomCyrus();" class="miniButton width_100">2D Cyrus-Beck</button>
+                <br/><button onclick="drawRandomCyrus3D();" class="miniButton width_100">3D Cyrus-Beck</button>
+				                <br/>Rotation:<br/>
+                <button onclick="rotateCube(ROTATION.X,false); reDrawHideLinesCyrus3D();" class="miniButton width_20">x</button>
+                <button onclick="rotateCube(ROTATION.Y,false); reDrawHideLinesCyrus3D();" class="miniButton width_20">y</button>
+                <button onclick="rotateCube(ROTATION.Z,false); reDrawHideLinesCyrus3D();" class="miniButton width_20">z</button>
+                <br/>
+                <button onclick="rotateCube(ROTATION.X,true); reDrawHideLinesCyrus3D();" class="miniButton width_20">x</button>
+                <button onclick="rotateCube(ROTATION.Y,true); reDrawHideLinesCyrus3D();" class="miniButton width_20">y</button>
+                <button onclick="rotateCube(ROTATION.Z,true); reDrawHideLinesCyrus3D();" class="miniButton width_20">z</button>
+                <!--<br/>Translation:<br/>-->
+                <!--button onclick="translateCube(MOVE_STEP,0,0); reDrawHideLinesCyrus3D();" class="miniButton width_20">x</button-->
+                <!--button onclick="translateCube(0,MOVE_STEP,0); reDrawHideLinesCyrus3D();" class="miniButton width_20">y</button-->
+                <!--button onclick="translateCube(0,0,MOVE_STEP); reDrawHideLinesCyrus3D();" class="miniButton width_20">z</button-->
+                <br/>
+                <!--button onclick="translateCube(-MOVE_STEP,0,0); reDrawHideLinesCyrus3D();" class="miniButton width_20">x</button-->
+                <!--button onclick="translateCube(0,-MOVE_STEP,0); reDrawHideLinesCyrus3D();" class="miniButton width_20">y</button-->
+                <button onclick="translateCube(0,0,-MOVE_STEP); reDrawHideLinesCyrus3D();" class="miniButton width_20">Z-</button>
+                <br/>
+            </div>
+
+            <h3>Canvas Settings</h3>
+
+            <div>
+                <label for="step">step:</label>
+                <input id="step" value="10" style="width: 40px" type="text"/>
+                <button onclick="changeStep()" class="miniButton width_100">Change step</button>
+                <button onclick="resetScale()" class="miniButton width_100">Reset scale</button>
+            </div>
+        </div>
+        <button onclick="clearCanvas()" class="miniButton " style="width:360px;">Clear canvas</button>
+        <div style="width:360px; overflow: auto;">
+            <table id="steps"></table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
